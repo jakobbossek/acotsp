@@ -293,6 +293,6 @@ getTourLength = function(tour, dist.mat) {
     for (i in 1:(n - 1)) {
         tour.length = tour.length + dist.mat[tour[i], tour[i + 1]]
     }
-    tour.length = dist.mat[tour[n], tour[1]]
+    tour.length = tour.length + dist.mat[tour[n], tour[1]]
     return(tour.length)
 }
