@@ -3,6 +3,9 @@
 #'
 #' Implementation of the classical Ant System (AS) introduced by Dorigo.
 #'
+#' @param x [\code{Network}]\cr
+#'   A network, i. e., a graph generated with the netgen package.
+#'   See \code{\link[netgen]{makeNetwork}} for details.
 #' @param n.ants [\code{integer(1)}]\cr
 #'   Number of ants. Positive integer.
 #' @param alpha [\code{numeric(1)}]\cr
@@ -15,6 +18,8 @@
 #'   \dQuote{Pheromone evaporation coefficient} respectively \dQuote{evaporation rate}.
 #'   In each iteration the pheromone on edge (i,j) are first decreased by (1 - rho)
 #'   before ants deposit their pheromones on it. Must be in (0, 1). Default is \code{0.1}.
+#' @param att.factor [\code{numeric(1)}]\cr
+#'   Constant attractiveness factor. Default is \code{1}.
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
 #' @param max.time [\code{integer(1)}]\cr
@@ -26,7 +31,7 @@
 #'   Known global best tour length. This can be used as another termination
 #'   criterion. Default is \code{NULL}, which means, that the length of the
 #'   globally best tour is unknown.
-#' @param termiation.eps [\code{numeric(1)}]\cr
+#' @param termination.eps [\code{numeric(1)}]\cr
 #'   If \code{global.opt.value} is set, the algorithm stops if the quadratic
 #'   distance between the global optimum value and the value of the best tour
 #'   found so far is lower than these gap value. Ignored if \code{global.opt.value}
@@ -47,7 +52,7 @@
 # with lots of different strategies: classical AS, ACO, Max-Min AS, ...
 aco = function(x,
     n.ants = 2L,
-    alpha = 1, beta = 2, rho = 0.1,
+    alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
     max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
     show.info = TRUE) {
 
@@ -83,6 +88,7 @@ aco = function(x,
     #FIXME: beta should be >= 1 according to wikipedia :-) Check this in literature.
     assertNumber(beta, lower = 1, finite = TRUE, na.ok = FALSE)
     assertNumber(rho, lower = 0, upper = 1, na.ok = FALSE)
+    assertNumber(att.factor, lower = 1, finite = TRUE, na.ok = FALSE)
 
 
     best.tour.length = Inf
@@ -174,7 +180,7 @@ aco = function(x,
             break
         }
 
-        pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho)
+        pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor)
         iter = iter + 1L
     }
 
@@ -250,18 +256,23 @@ hasAntUsedEdge = function(tour, start, end) {
 #   Vector of the ant tour length.
 # @param rho [numeric(1)]
 #   Evaporation rate.
+# @param att.factor [numeric(1)]
+#   Constant attractiveness factor.
 # @return [matrix]
 #   Updated pheromone matrix.
 #FIXME: ugly as sin!!!
 #FIXME: Save used edges during tour constuction!
-updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho) {
+updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho, att.factor) {
     n = nrow(pher.mat)
+    # first evaporate all edges
+    pher.mat = (1 - rho) * pher.mat
+    n.ants = length(tour.lengths)
     for (i in seq(n)) {
         for (j in seq(n)) {
-            ants.pher.evap = sapply(1:length(tour.lengths), function(k) {
-                if (hasAntUsedEdge(ants.tours[k, ], i, j)) 1 / tour.lengths[k] else 0
+            ants.pher.evap = sapply(seq(n.ants), function(k) {
+                if (hasAntUsedEdge(ants.tours[k, ], i, j)) att.factor / tour.lengths[k] else 0
             })
-            pher.mat[i, j] = (1 - rho) * pher.mat[i, j] + sum(ants.pher.evap)
+            pher.mat[i, j] = pher.mat[i, j] + sum(ants.pher.evap)
         }
     }
     return(pher.mat)

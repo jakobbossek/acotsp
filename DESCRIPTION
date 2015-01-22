@@ -1,7 +1,7 @@
 Package: ants
 Type: Package
 Title: Ant Colony Optimization for the TSP
-Description: This package impelements the Ant Colony Optimization (ACO) framework as an optimizer for the popular Travelling Salesperson Problem (TSP).
+Description: This package implements the Ant Colony Optimization (ACO) framework as an optimizer for the popular Travelling Salesperson Problem (TSP).
 Version: 1.0
 Date: 2015-01-21
 Authors@R: c(person("Jakob", "Bossek", email = "j.bossek@gmail.com", role =
@@ -9,7 +9,9 @@ Authors@R: c(person("Jakob", "Bossek", email = "j.bossek@gmail.com", role =
 Maintainer: Jakob Bossek <j.bossek@gmail.com>
 License: BSD_3_clause + file LICENSE
 Depends:
-    BBmisc (>= 1.6)
+    BBmisc (>= 1.6),
+    ParamHelpers (>= 1.5),
+    netgen (>= 1.0)
 Imports:
     checkmate (>= 1.5.1)
 Suggests:
