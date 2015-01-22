@@ -2,8 +2,9 @@
 % Please edit documentation in R/aco.R
 \name{aco}
 \alias{aco}
-\title{Ant System optimization procedure for the symmetric or asymetric Travelling
-Salesperson Problem (TSP).}
+\title{Ant System Optimization (ACO) algorithm for the (a)symmetric
+\href{http://en.wikipedia.org/wiki/Travelling_salesman_problem}{Travelling
+Salesperson Problem} (TSP).}
 \usage{
 aco(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 1e-04, min.pher.conc = 0, max.pher.conc = 1e+06,
@@ -12,7 +13,7 @@ aco(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
 }
 \arguments{
 \item{x}{[\code{Network}]\cr
-A network, i. e., a graph generated with the netgen package.
+A network, i. e., a graph generated with the \pkg{netgen} package.
 See \code{\link[netgen]{makeNetwork}} for details.}
 
 \item{n.ants}{[\code{integer(1)}]\cr
@@ -76,4 +77,15 @@ on failure with a cryptic message and stops on success with no message.}
 \description{
 Implementation of the classical Ant System (AS) introduced by Dorigo.
 }
+\examples{
+library(netgen)
+  x = generateRandomInstance(n.points = 6L)
+  res = aco(x, alpha = 1.2, beta = 1.8, n.ants = 15L, init.pher.conc = 0.01, max.iter = 10L)
+  print(res)
+
+  x = matrix(c(1, 2, 1, 3, 1, 4, 3, 1, 3, 2, 3, 4), ncol = 2, byrow = TRUE)
+  x = makeNetwork(x, lower = 1, upper = 4)
+  res = aco(x, max.iter = 30L, n.ants = 20L, show.info = TRUE)
+}
+\keyword{Optimization}
 

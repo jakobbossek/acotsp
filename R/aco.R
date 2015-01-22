@@ -1,10 +1,11 @@
-#' Ant System optimization procedure for the symmetric or asymetric Travelling
-#' Salesperson Problem (TSP).
+#' Ant System Optimization (ACO) algorithm for the (a)symmetric
+#' \href{http://en.wikipedia.org/wiki/Travelling_salesman_problem}{Travelling
+#' Salesperson Problem} (TSP).
 #'
 #' Implementation of the classical Ant System (AS) introduced by Dorigo.
 #'
 #' @param x [\code{Network}]\cr
-#'   A network, i. e., a graph generated with the netgen package.
+#'   A network, i. e., a graph generated with the \pkg{netgen} package.
 #'   See \code{\link[netgen]{makeNetwork}} for details.
 #' @param n.ants [\code{integer(1)}]\cr
 #'   Number of ants. Positive integer.
@@ -49,6 +50,16 @@
 #'   on failure with a cryptic message and stops on success with no message.
 #' @return [\code{AntsResult}]
 #'   S3 object containing the result.
+#' @keywords Optimization
+#' @examples
+#'   library(netgen)
+#'   x = generateRandomInstance(n.points = 6L)
+#'   res = aco(x, alpha = 1.2, beta = 1.8, n.ants = 15L, init.pher.conc = 0.01, max.iter = 10L)
+#'   print(res)
+#'
+#'   x = matrix(c(1, 2, 1, 3, 1, 4, 3, 1, 3, 2, 3, 4), ncol = 2, byrow = TRUE)
+#'   x = makeNetwork(x, lower = 1, upper = 4)
+#'   res = aco(x, max.iter = 30L, n.ants = 20L, show.info = TRUE)
 #' @export
 aco = function(x,
     n.ants = 2L,
