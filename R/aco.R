@@ -20,6 +20,8 @@
 #'   before ants deposit their pheromones on it. Must be in (0, 1). Default is \code{0.1}.
 #' @param att.factor [\code{numeric(1)}]\cr
 #'   Constant attractiveness factor. Default is \code{1}.
+#' @param init.pher.conc [\code{numeric(1)}]\cr
+#'   Initial pheromone concentration for every single edge. Default is \code{0.0001}.
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
 #' @param max.time [\code{integer(1)}]\cr
@@ -46,11 +48,15 @@
 #' @export
 aco = function(x,
     n.ants = 2L,
-    alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
+    alpha = 1, beta = 2, rho = 0.1, att.factor = 1, init.pher.conc = 0.0001,
     max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
     show.info = FALSE) {
 
-    used.arguments = list(n.ants = n.ants, alpha = alpha, beta = beta, rho = rho, att.factor = att.factor)
+    used.arguments = list(
+        n.ants = n.ants,
+        alpha = alpha, beta = beta, rho = rho, att.factor = att.factor,
+        init.pher.conc = init.pher.conc
+    )
 
     #FIXME: do we need special class here? We need the distance matrix.
     assertClass(x, "Network")
@@ -83,24 +89,20 @@ aco = function(x,
     assertNumber(beta, lower = 1, finite = TRUE, na.ok = FALSE)
     assertNumber(rho, lower = 0, upper = 1, na.ok = FALSE)
     assertNumber(att.factor, lower = 1, finite = TRUE, na.ok = FALSE)
-
+    assertNumber(att.factor, lower = 0.0001, finite = TRUE, na.ok = FALSE)
 
     best.tour.length = Inf
     best.tour = rep(NA, n)
+
+    pher.mat = matrix(init.pher.conc, ncol = n, nrow = n)
+    par.set = makeNumericParamSet("n", len = n, lower = 1, upper = n)
+    opt.path = makeOptPathDF(par.set, "tour.length", minimize = TRUE, )
 
     # initialize ants! We keep them implicitely, i. e., we keep an (m x n)
     # matrix, where m is the number of ants and n is the number of nodes
     # of the problem instance at hand.
     # Each row of the matrix contains a permutation of {1,...,n}, i. e., a
     # valid tour.
-
-    #FIXME: get rid of magic number. Make parameter out of it.
-    pher.mat = matrix(0.0001, ncol = n, nrow = n)
-    par.set = makeNumericParamSet("n", len = n, lower = 1, upper = n)
-    opt.path = makeOptPathDF(par.set, "tour.length", minimize = TRUE, )
-
-    # initialize first ant tours, i. e., select a start node randomly and
-    # construct a valid tour
     ants.tours = matrix(NA, ncol = n, nrow = n.ants)
 
 
@@ -109,6 +111,9 @@ aco = function(x,
             print(round(pher.mat, digits = 2))
             catf("----------------")
         }
+        # initialize first ant tours, i. e., select a start node randomly and
+        # construct a valid tour
+        #FIXME: move this to dedicated function 'searchForFood' or findAntTrails
         for (ant in seq(n.ants)) {
             #FIXME: this is O(n^2). Research method to make this more effective!
             start = sample(1:n, size = 1)
@@ -133,13 +138,11 @@ aco = function(x,
                 i = i + 1L
             }
         }
-        #print(ants.tours)
 
         # get tour length
         ants.tour.lengths = apply(ants.tours, 1, function(x) {
             getTourLength(x, dist.mat)
         })
-        #print(ants.tour.lengths)
 
         best.current.ant = which.min(ants.tour.lengths)
         best.current.tour.length = ants.tour.lengths[best.current.ant]

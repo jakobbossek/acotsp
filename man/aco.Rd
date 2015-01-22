@@ -6,8 +6,8 @@
 Salesperson Problem (TSP).}
 \usage{
 aco(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
-  max.iter = 10L, max.time = Inf, global.opt.value = NULL,
-  termination.eps = 0.1, show.info = FALSE)
+  init.pher.conc = 1e-04, max.iter = 10L, max.time = Inf,
+  global.opt.value = NULL, termination.eps = 0.1, show.info = FALSE)
 }
 \arguments{
 \item{x}{[\code{Network}]\cr
@@ -32,6 +32,9 @@ before ants deposit their pheromones on it. Must be in (0, 1). Default is \code{
 
 \item{att.factor}{[\code{numeric(1)}]\cr
 Constant attractiveness factor. Default is \code{1}.}
+
+\item{init.pher.conc}{[\code{numeric(1)}]\cr
+Initial pheromone concentration for every single edge. Default is \code{0.0001}.}
 
 \item{max.iter}{[\code{integer(1)}]\cr
 Maximal number of iterations. Default is \code{10}.}
