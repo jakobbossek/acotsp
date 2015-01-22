@@ -13,6 +13,20 @@
 #'   on the selection of edges.
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
+#' @param max.time [\code{integer(1)}]\cr
+#'   Maximum running time in seconds. The algorithm tries hard to hold this
+#'   restriction by logging the times of a number of prior iterations and
+#'   determining statistically whether the time limit can be hold when another
+#'   iteration is done. Default ist \code{Inf}, which means no time limit at all.
+#' @param global.opt.value [\code{numeric(1)}]\cr
+#'   Known global best tour length. This can be used as another termination
+#'   criterion. Default is \code{NULL}, which means, that the length of the
+#'   globally best tour is unknown.
+#' @param termiation.eps [\code{numeric(1)}]\cr
+#'   If \code{global.opt.value} is set, the algorithm stops if the quadratic
+#'   distance between the global optimum value and the value of the best tour
+#'   found so far is lower than these gap value. Ignored if \code{global.opt.value}
+#'   is \code{NULL}.
 #' @param show.info [\code{logical(1)}]\cr
 #'   If \code{TRUE}, which is the default value, some information is printed to
 #'   the standard output during execution.
@@ -30,7 +44,18 @@
 #FIMXE: add status codes, i.e., 0 = terminated (time), 1 = terminated (max.iter), ...
 #FIXME: this is just a "case study". Need to make a framework out of it
 # with lots of different strategies: classical AS, ACO, Max-Min AS, ...
-aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, show.info = TRUE) {
+aco = function(x,
+    n.ants = 2L,
+    alpha = 1, beta = 2, rho = 0.2,
+    max.iter = 10L, max.time = Inf, global.opt.value = NULL,
+    show.info = TRUE) {
+
+    # init termination criteria values
+    start.time = Sys.time()
+    iter = 1L
+    assertNumber(max.time, lower = 100L, na.ok = FALSE)
+
+    # do sanity checks
     #FIXME: upper should be somewhat n/2 or something of this type.
     assertInteger(n.ants, lower = 1)
     assertNumber(alpha, lower = 0, finite = TRUE, na.ok = FALSE)
@@ -52,7 +77,7 @@ aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, s
     # Each row of the matrix contains a permutation of {1,...,n}, i. e., a
     # valid tour.
 
-    #FIXME: get rid of magic number
+    #FIXME: get rid of magic number. Make parameter out of it.
     pher.mat = matrix(0.0001, ncol = n, nrow = n)
     par.set = makeNumericParamSet("n", len = n, lower = 1, upper = n)
     opt.path = makeOptPathDF(par.set, "tour.length", minimize = TRUE, )
@@ -61,8 +86,8 @@ aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, s
     # construct a valid tour
     ants.tours = matrix(NA, ncol = n, nrow = n.ants)
 
-    iter = 1L
-    while (iter <= max.iter) {
+
+    repeat {
         if (show.info) {
             print(round(pher.mat, digits = 2))
             catf("----------------")
@@ -118,6 +143,19 @@ aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, s
             catf("Best tour length: %f", best.tour.length)
             catf("Best tour: %s", collapse(best.tour, sep = ", "))
         }
+        termination.code = getTerminationCode(
+            current.iter = iter,
+            max.iter = max.iter,
+            global.opt.value = global.opt.value,
+            current.best.value = best.current.tour.length,
+            termination.eps = termination.eps,
+            start.time = start.time,
+            max.time = max.time
+        )
+
+        if (termination.code > -1L) {
+            break
+        }
 
         pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho)
         iter = iter + 1L
@@ -127,6 +165,8 @@ aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, s
         best.tour = best.tour,
         best.tour.length = best.tour.length,
         opt.path = opt.path,
+        termination.code = termination.code,
+        termination.message = getTerminationMessage(termination.code),
         classes = "AntsResult"
     )
     #FIXME: save state in trace. Maybe in ParamHelpers::optPath?
