@@ -147,7 +147,7 @@ aco = function(x,
             best.tour.length = best.current.tour.length
             best.tour = best.current.tour
         }
-        if (!show.info) {
+        if (show.info) {
             catf("======")
             catf("Current iteration: %i", i)
             catf("Best ant: %i", best.current.ant)
