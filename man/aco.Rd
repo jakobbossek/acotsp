@@ -6,8 +6,9 @@
 Salesperson Problem (TSP).}
 \usage{
 aco(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
-  init.pher.conc = 1e-04, max.iter = 10L, max.time = Inf,
-  global.opt.value = NULL, termination.eps = 0.1, show.info = FALSE)
+  init.pher.conc = 1e-04, min.pher.conc = 0, max.pher.conc = 1e+06,
+  max.iter = 10L, max.time = Inf, global.opt.value = NULL,
+  termination.eps = 0.1, show.info = FALSE)
 }
 \arguments{
 \item{x}{[\code{Network}]\cr
@@ -35,6 +36,12 @@ Constant attractiveness factor. Default is \code{1}.}
 
 \item{init.pher.conc}{[\code{numeric(1)}]\cr
 Initial pheromone concentration for every single edge. Default is \code{0.0001}.}
+
+\item{min.pher.conc}{[\code{numeric(1)}]\cr
+Minimal pheromone concentration for every single edge. Default is \code{0}.}
+
+\item{max.pher.conc}{[\code{numeric(1)}]\cr
+Maximal pheromone concentration for every single edge. Default is \code{10e5}.}
 
 \item{max.iter}{[\code{integer(1)}]\cr
 Maximal number of iterations. Default is \code{10}.}

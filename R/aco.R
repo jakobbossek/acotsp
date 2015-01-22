@@ -22,6 +22,10 @@
 #'   Constant attractiveness factor. Default is \code{1}.
 #' @param init.pher.conc [\code{numeric(1)}]\cr
 #'   Initial pheromone concentration for every single edge. Default is \code{0.0001}.
+#' @param min.pher.conc [\code{numeric(1)}]\cr
+#'   Minimal pheromone concentration for every single edge. Default is \code{0}.
+#' @param max.pher.conc [\code{numeric(1)}]\cr
+#'   Maximal pheromone concentration for every single edge. Default is \code{10e5}.
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
 #' @param max.time [\code{integer(1)}]\cr
@@ -48,14 +52,16 @@
 #' @export
 aco = function(x,
     n.ants = 2L,
-    alpha = 1, beta = 2, rho = 0.1, att.factor = 1, init.pher.conc = 0.0001,
+    alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
+    init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
     max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
     show.info = FALSE) {
 
     used.arguments = list(
         n.ants = n.ants,
         alpha = alpha, beta = beta, rho = rho, att.factor = att.factor,
-        init.pher.conc = init.pher.conc
+        init.pher.conc = init.pher.conc,
+        min.pher.conc = min.pher.conc, max.pher.conc = max.pher.conc
     )
 
     #FIXME: do we need special class here? We need the distance matrix.
@@ -89,7 +95,9 @@ aco = function(x,
     assertNumber(beta, lower = 1, finite = TRUE, na.ok = FALSE)
     assertNumber(rho, lower = 0, upper = 1, na.ok = FALSE)
     assertNumber(att.factor, lower = 1, finite = TRUE, na.ok = FALSE)
-    assertNumber(att.factor, lower = 0.0001, finite = TRUE, na.ok = FALSE)
+    assertNumber(init.pher.conc, lower = 0.0001, finite = TRUE, na.ok = FALSE)
+    assertNumber(min.pher.conc, lower = 0, finite = TRUE, na.ok = FALSE)
+    assertNumber(max.pher.conc, lower = 1, finite = TRUE, na.ok = FALSE)
 
     best.tour.length = Inf
     best.tour = rep(NA, n)
@@ -177,7 +185,7 @@ aco = function(x,
             break
         }
 
-        pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor)
+        pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc)
         iter = iter + 1L
     }
 
@@ -262,7 +270,7 @@ hasAntUsedEdge = function(tour, start, end) {
 #   Updated pheromone matrix.
 #FIXME: ugly as sin!!!
 #FIXME: Save used edges during tour constuction!
-updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho, att.factor) {
+updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc) {
     n = nrow(pher.mat)
     # first evaporate all edges
     pher.mat = (1 - rho) * pher.mat
@@ -273,6 +281,11 @@ updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho, a
                 if (hasAntUsedEdge(ants.tours[k, ], i, j)) att.factor / tour.lengths[k] else 0
             })
             pher.mat[i, j] = pher.mat[i, j] + sum(ants.pher.evap)
+            if (pher.mat[i, j] < min.pher.conc) {
+                pher.mat[i, j] = min.pher.conc
+            } else if (pher.mat[i, j] > max.pher.conc) {
+                pher.mat[i, j] = max.pher.conc
+            }
         }
     }
     return(pher.mat)
