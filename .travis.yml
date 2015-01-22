@@ -11,6 +11,7 @@ install:
   - ./travis-tool.sh github_package hadley/assertthat
   - ./travis-tool.sh github_package berndbischl/BBmisc
   - ./travis-tool.sh github_package berndbischl/ParamHelpers
+  - ./travis-tool.sh github_package jakobbossek/netgen
   - ./travis-tool.sh install_deps
 script: ./travis-tool.sh run_tests
 
