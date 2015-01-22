@@ -64,7 +64,6 @@ aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, s
     iter = 1L
     while (iter <= max.iter) {
         if (show.info) {
-            #FIXME: pher.mat is not symmetric
             print(round(pher.mat, digits = 2))
             catf("----------------")
         }
@@ -130,9 +129,7 @@ aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, s
         opt.path = opt.path,
         classes = "AntsResult"
     )
-    #FIXME: add result object
     #FIXME: save state in trace. Maybe in ParamHelpers::optPath?
-    #FIXME: add update of pheromones
     #FIXME: keep different update strategies in mind! Write a nice interface
     #FIXME: write plot monitoring function. Highlight edges according to pheromones
 }
@@ -183,8 +180,23 @@ hasAntUsedEdge = function(tour, start, end) {
     return(FALSE)
 }
 
+# AS-like update of pheromone concentration of the edges, i. e., gentle evaporation
+# and increase according to number of visits and inverse distance of each edge.
+#
+# @param pher.mat [matrix]
+#   Matrix of pheromone concentration.
+# @param dist.mat [matrix]
+#   Distance matrix.
+# @param ants.tours [matrix]
+#   Matrix containing the trails/tours of each ant row-wise.
+# @param tour.lengths [numeric]
+#   Vector of the ant tour length.
+# @param rho [numeric(1)]
+#   Evaporation rate.
+# @return [matrix]
+#   Updated pheromone matrix.
 #FIXME: ugly as sin!!!
-# Save used edges during tour constuction!
+#FIXME: Save used edges during tour constuction!
 updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho) {
     n = nrow(pher.mat)
     for (i in seq(n)) {
@@ -211,7 +223,7 @@ getTourLength = function(tour, dist.mat) {
     tour.length = 0
     n = length(tour)
     for (i in 1:(n - 1)) {
-        tour.length = tour.length + dist.mat[i, i + 1]
+        tour.length = tour.length + dist.mat[tour[i], tour[i + 1]]
     }
     tour.length = dist.mat[tour[n], tour[1]]
     return(tour.length)
