@@ -38,14 +38,17 @@
 #'   is \code{NULL}.
 #' @param show.info [\code{logical(1)}]\cr
 #'   If \code{TRUE}, which is the default value, some information is printed to
-#'   the standard output during execution.
+#'   the standard output during execution. Default is \code{FALSE}, which means
+#'   that the algorithm behaves like a typical Unix terminal program. It stops
+#'   on failure with a cryptic message and stops on success with no message.
 #' @return [\code{AntsResult}]
 #'   S3 object containing the result.
+#' @export
 aco = function(x,
     n.ants = 2L,
     alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
     max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
-    show.info = TRUE) {
+    show.info = FALSE) {
 
     #FIXME: do we need special class here? We need the distance matrix.
     assertClass(x, "Network")
