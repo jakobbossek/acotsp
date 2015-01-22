@@ -11,6 +11,10 @@
 #' @param beta [\code{numeric(1)}]\cr
 #'   This parameter decided how much influence the edges distances have
 #'   on the selection of edges.
+#' @param rho [\code{numeric(1)}]\cr
+#'   \dQuote{Pheromone evaporation coefficient} respectively \dQuote{evaporation rate}.
+#'   In each iteration the pheromone on edge (i,j) are first decreased by (1 - rho)
+#'   before ants deposit their pheromones on it. Must be in (0, 1). Default is \code{0.1}.
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
 #' @param max.time [\code{integer(1)}]\cr
@@ -32,7 +36,6 @@
 #'   the standard output during execution.
 #' @return [\code{AntsResult}]
 #'   S3 object containing the result.
-#FIXME: write documentation for this function.
 #FIXME: what are reasonable defaults for these parameters?
 #FIXME: add weight parameter for the pheromene increasing (Q)
 #FIXME: add another stopping criterion: max.time (in seconds), implement an heuristic,
@@ -40,33 +43,47 @@
 # of these (i.e., median, max, 0.75-quartile) to decide whether another iteration is
 # possible within time.
 #FIXME: add monitoring option (see ecr for this)
-#FIXME: add function shouldTerminate or isTerminationCriterionFullfilled (see ecr)
-#FIMXE: add status codes, i.e., 0 = terminated (time), 1 = terminated (max.iter), ...
 #FIXME: this is just a "case study". Need to make a framework out of it
 # with lots of different strategies: classical AS, ACO, Max-Min AS, ...
 aco = function(x,
     n.ants = 2L,
-    alpha = 1, beta = 2, rho = 0.2,
-    max.iter = 10L, max.time = Inf, global.opt.value = NULL,
+    alpha = 1, beta = 2, rho = 0.1,
+    max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
     show.info = TRUE) {
+
+    #FIXME: do we need special class here? We need the distance matrix.
+    assertClass(x, "Network")
+
+    # generate distance matrix d(i, j)
+    dist.mat = as.matrix(dist(x$coordinates, method = "euclidean"))
+    n = getNumberOfNodes(x)
 
     # init termination criteria values
     start.time = Sys.time()
     iter = 1L
+    if (is.finite(max.time)) {
+        max.time = convertInteger(max.time)
+    }
     assertNumber(max.time, lower = 100L, na.ok = FALSE)
+
+    if (is.finite(max.iter)) {
+        max.iter = convertInteger(max.iter)
+    }
+    assertInt(max.iter, lower = 1L, na.ok = FALSE)
+    #FIXME: allow value to be NULL explicitely via null.ok = TRUE in checkmate would be great
+    if (!is.null(global.opt.value)) {
+        assertNumber(global.opt.value, na.ok = FALSE, finite = TRUE)
+    }
+    assertNumber(termination.eps, lower = 0.000001, finite = TRUE, na.ok = FALSE)
 
     # do sanity checks
     #FIXME: upper should be somewhat n/2 or something of this type.
     assertInteger(n.ants, lower = 1)
     assertNumber(alpha, lower = 0, finite = TRUE, na.ok = FALSE)
-    assertNumber(beta, lower = 0, finite = TRUE, na.ok = FALSE)
+    #FIXME: beta should be >= 1 according to wikipedia :-) Check this in literature.
+    assertNumber(beta, lower = 1, finite = TRUE, na.ok = FALSE)
     assertNumber(rho, lower = 0, upper = 1, na.ok = FALSE)
 
-    #FIXME: do we need special class here? We need the distance matrix.
-    assertClass(x, "Network")
-    # generate distance matrix d(i, j)
-    dist.mat = as.matrix(dist(x$coordinates, method = "euclidean"))
-    n = getNumberOfNodes(x)
 
     best.tour.length = Inf
     best.tour = rep(NA, n)
