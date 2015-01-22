@@ -50,6 +50,8 @@ aco = function(x,
     max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
     show.info = FALSE) {
 
+    used.arguments = list(n.ants = n.ants, alpha = alpha, beta = beta, rho = rho, att.factor = att.factor)
+
     #FIXME: do we need special class here? We need the distance matrix.
     assertClass(x, "Network")
 
@@ -176,10 +178,16 @@ aco = function(x,
         iter = iter + 1L
     }
 
+
     makeS3Obj(
+        call = match.call(),
+        used.arguments = used.arguments,
+        network = x,
         best.tour = best.tour,
         best.tour.length = best.tour.length,
         opt.path = opt.path,
+        time.passed = difftime(Sys.time(), start.time, units = "secs"),
+        iters.done = iter,
         termination.code = termination.code,
         termination.message = getTerminationMessage(termination.code),
         classes = "AntsResult"
