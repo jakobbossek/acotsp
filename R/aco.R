@@ -1,13 +1,33 @@
-getTransitionProbabilities = function(start, used, alpha, beta, dist.mat, pher.mat) {
-    unused.idx = which(!used)
-    probs = sapply(unused.idx, function(dest) {
-        (pher.mat[start, dest])^alpha * (1 / dist.mat[start, dest])^beta
-    })
-    (probs / sum(probs))
-}
-
+#' Ant System optimization procedure for the symmetric or asymetric Travelling
+#' Salesperson Problem (TSP).
+#'
+#' Implementation of the classical Ant System (AS) introduced by Dorigo.
+#'
+#' @param n.ants [\code{integer(1)}]\cr
+#'   Number of ants. Positive integer.
+#' @param alpha [\code{numeric(1)}]\cr
+#'   This parameter decided how much influence the pheromones on an edge have
+#'   on the selection of edges. Default is \code{1}.
+#' @param beta [\code{numeric(1)}]\cr
+#'   This parameter decided how much influence the edges distances have
+#'   on the selection of edges.
+#' @param max.iter [\code{integer(1)}]\cr
+#'   Maximal number of iterations. Default is \code{10}.
+#' @param show.info [\code{logical(1)}]\cr
+#'   If \code{TRUE}, which is the default value, some information is printed to
+#'   the standard output during execution.
+#' @return [\code{AntsResult}]
+#'   S3 object containing the result.
 #FIXME: write documentation for this function.
 #FIXME: what are reasonable defaults for these parameters?
+#FIXME: add weight parameter for the pheromene increasing (Q)
+#FIXME: add another stopping criterion: max.time (in seconds), implement an heuristic,
+# which saves the execution times of the last 5 or so iterations, and takes a statistic
+# of these (i.e., median, max, 0.75-quartile) to decide whether another iteration is
+# possible within time.
+#FIXME: add monitoring option (see ecr for this)
+#FIXME: add function shouldTerminate or isTerminationCriterionFullfilled (see ecr)
+#FIMXE: add status codes, i.e., 0 = terminated (time), 1 = terminated (max.iter), ...
 #FIXME: this is just a "case study". Need to make a framework out of it
 # with lots of different strategies: classical AS, ACO, Max-Min AS, ...
 aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, show.info = TRUE) {
@@ -117,7 +137,43 @@ aco = function(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.2, max.iter = 10L, s
     #FIXME: write plot monitoring function. Highlight edges according to pheromones
 }
 
-#FIXME: ugly as sin!!!
+
+# Get the transition probabilities which ants use to determine randomly which
+# edges to choose next.
+#
+# @param start [integer(1)]
+#   Id of the start city.
+# @param used [logical]
+#   Logical vector. If used[i] is TRUE, the i-th city has already been visited.
+# @param alpha [integer(1)]
+#   See aco documentation.
+# @param beta [integer(1)]
+#   See aco documentation.
+# @param dist.mat [matrix]
+#   Distance matrix.
+# @param pher.mat [matrix]
+#   Pheromone matrix.
+# @return [numeric]
+#   Vector of probabilities
+getTransitionProbabilities = function(start, used, alpha, beta, dist.mat, pher.mat) {
+    unused.idx = which(!used)
+    probs = sapply(unused.idx, function(dest) {
+        (pher.mat[start, dest])^alpha * (1 / dist.mat[start, dest])^beta
+    })
+    (probs / sum(probs))
+}
+
+# Checks whether an ant has used an edge on its trail.
+#
+# @param tour [integer]
+#   Ants tour, i.e., a permutation of 1:n, where n is the number of nodes.
+# @param start [integer(1)]
+#   Id of the start node of the edge.
+# @param end [integer(1)]
+#   Id of the end node of the edge.
+# @return [logical(1)]
+#   TRUE, if ant used the (start, end) edge on its trail.
+#FIXME: this implementation is ugly and not R-like!
 hasAntUsedEdge = function(tour, start, end) {
     tour = c(tour, tour[1])
     for (i in 1:(length(tour) - 1)) {
@@ -142,12 +198,21 @@ updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho) {
     return(pher.mat)
 }
 
+# Helper function which determines the tour length of a given tour based on
+# the distance matrix.
+#
+# @param tour [numeric]
+#   Ants tour, i.e., a permutation of 1:n, where n is the number of nodes.
+# @param dist.mat [matrix]
+#   Distance matrix.
+# @return [numeric(1)]
+#   Tour length.
 getTourLength = function(tour, dist.mat) {
-    tl = 0
+    tour.length = 0
     n = length(tour)
     for (i in 1:(n - 1)) {
-        tl = tl + dist.mat[i, i + 1]
+        tour.length = tour.length + dist.mat[i, i + 1]
     }
-    tl = dist.mat[tour[n], tour[1]]
-    return(tl)
+    tour.length = dist.mat[tour[n], tour[1]]
+    return(tour.length)
 }
