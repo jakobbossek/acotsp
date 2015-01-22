@@ -8,18 +8,18 @@
 #' @export
 print.AntsResult = function(x, ...) {
     n = getNumberOfNodes(x$network)
-    catf("ALGORITHM AND PARAMETERS:")
+    catf("ALGORITHM AND PARAMETERS")
     catf("Result object of call:")
     print(x$call)
-    catf("Operated on complete graph of size %i", n)
-    catf("Parametrization of solver: %s", collapseList(x$used.arguments, sep = ", "))
+    catf("Parameters: %s", collapseList(x$used.arguments, sep = ", "))
 
-    catf("\nRESULT:")
-    catf("Length of shortest (best) tour found: ", x$best.tour.length)
-    catf("Tour beginns with: %s%s", collapse(x$best.tour[1:10], sep = ", "), if (n > 10) " ..." else "")
+    catf("\nRESULT")
+    catf("Tour length: %.5f", x$best.tour.length)
+    catf("Tour: %s%s", collapse(x$best.tour[1:10], sep = ", "), if (n > 10) ", ..." else "")
 
-    catf("\nOPTIMIZATION PATH:")
+    catf("\nOPTIMIZATION PATH")
     print(head(as.data.frame(x$opt.path)))
+    catf("...")
 }
 
 #FIXME: move this to BBmisc/HELL?
