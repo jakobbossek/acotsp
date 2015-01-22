@@ -41,15 +41,6 @@
 #'   the standard output during execution.
 #' @return [\code{AntsResult}]
 #'   S3 object containing the result.
-#FIXME: what are reasonable defaults for these parameters?
-#FIXME: add weight parameter for the pheromene increasing (Q)
-#FIXME: add another stopping criterion: max.time (in seconds), implement an heuristic,
-# which saves the execution times of the last 5 or so iterations, and takes a statistic
-# of these (i.e., median, max, 0.75-quartile) to decide whether another iteration is
-# possible within time.
-#FIXME: add monitoring option (see ecr for this)
-#FIXME: this is just a "case study". Need to make a framework out of it
-# with lots of different strategies: classical AS, ACO, Max-Min AS, ...
 aco = function(x,
     n.ants = 2L,
     alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
@@ -82,10 +73,8 @@ aco = function(x,
     assertNumber(termination.eps, lower = 0.000001, finite = TRUE, na.ok = FALSE)
 
     # do sanity checks
-    #FIXME: upper should be somewhat n/2 or something of this type.
     assertInteger(n.ants, lower = 1)
     assertNumber(alpha, lower = 0, finite = TRUE, na.ok = FALSE)
-    #FIXME: beta should be >= 1 according to wikipedia :-) Check this in literature.
     assertNumber(beta, lower = 1, finite = TRUE, na.ok = FALSE)
     assertNumber(rho, lower = 0, upper = 1, na.ok = FALSE)
     assertNumber(att.factor, lower = 1, finite = TRUE, na.ok = FALSE)
@@ -192,9 +181,6 @@ aco = function(x,
         termination.message = getTerminationMessage(termination.code),
         classes = "AntsResult"
     )
-    #FIXME: save state in trace. Maybe in ParamHelpers::optPath?
-    #FIXME: keep different update strategies in mind! Write a nice interface
-    #FIXME: write plot monitoring function. Highlight edges according to pheromones
 }
 
 
