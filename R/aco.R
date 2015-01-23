@@ -84,6 +84,7 @@ aco = function(x,
 
     # init termination criteria values
     start.time = Sys.time()
+    iter.times = numeric(5L)
     iter = 1L
     if (is.finite(max.time)) {
         max.time = convertInteger(max.time)
@@ -126,6 +127,8 @@ aco = function(x,
 
 
     repeat {
+        iter.start.time = Sys.time()
+
         if (show.info) {
             print(round(pher.mat, digits = 2))
             catf("----------------")
@@ -189,7 +192,8 @@ aco = function(x,
             current.best.value = best.current.tour.length,
             termination.eps = termination.eps,
             start.time = start.time,
-            max.time = max.time
+            max.time = max.time,
+            iter.times = iter.times
         )
 
         if (termination.code > -1L) {
@@ -197,6 +201,7 @@ aco = function(x,
         }
 
         pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc)
+        iter.times[iter %% 5] = difftime(Sys.time(), iter.start.time, units = "secs")
         iter = iter + 1L
     }
 

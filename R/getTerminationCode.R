@@ -14,12 +14,14 @@
 #   Start time as returned by Sys.time().
 # @param max.time [integer]
 #   Maximal time budget in seconds.
+# @param iter.times [numeric]
+#   Runtimes of the last iterations.
 # @return [integer(1)]
 #   Return code. See getTerminationMessage for encoding.
 getTerminationCode = function(
     current.iter, max.iter,
     global.opt.value, current.best.value, termination.eps,
-    start.time, max.time) {
+    start.time, max.time, iter.times) {
     if (didReachMaximumIterations(current.iter, max.iter)) {
         return(0L)
     }
