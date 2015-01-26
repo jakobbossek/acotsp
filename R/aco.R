@@ -66,7 +66,7 @@ aco = function(x,
     alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
     init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
     max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
-    show.info = FALSE) {
+    show.info = FALSE, trace.all = FALSE) {
 
     used.arguments = list(
         n.ants = n.ants,
@@ -125,6 +125,12 @@ aco = function(x,
     # valid tour.
     ants.tours = matrix(NA, ncol = n, nrow = n.ants)
 
+    pher.mat.storage = ants.tours.storage = best.tour.storage = NULL
+    if (trace.all) {
+        pher.mat.storage = vector(mode = "list", length = max.iter)
+        ants.tours.storage = vector(mode = "list", length = max.iter)
+        best.tour.storage = vector(mode = "list", length = max.iter)
+    }
 
     repeat {
         iter.start.time = Sys.time()
@@ -201,6 +207,11 @@ aco = function(x,
         }
 
         pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc)
+        if (trace.all) {
+            pher.mat.storage[[iter]] = pher.mat
+            ants.tours.storage[[iter]] = ants.tours
+            best.tour.storage[[iter]] = best.tour
+        }
         iter.times[iter %% 5] = difftime(Sys.time(), iter.start.time, units = "secs")
         iter = iter + 1L
     }
@@ -215,6 +226,11 @@ aco = function(x,
         opt.path = opt.path,
         time.passed = difftime(Sys.time(), start.time, units = "secs"),
         iters.done = iter,
+        storage = list(
+            pher.mat.storage = pher.mat.storage,
+            ants.tours.storage = ants.tours.storage,
+            best.tour.storage = best.tour.storage
+        ),
         termination.code = termination.code,
         termination.message = getTerminationMessage(termination.code),
         classes = "AntsResult"
