@@ -13,6 +13,7 @@ Depends:
     ParamHelpers (>= 1.5),
     netgen (>= 1.0)
 Imports:
-    checkmate (>= 1.5.1)
+    checkmate (>= 1.5.1),
+    ggplot2
 Suggests:
     testthat
