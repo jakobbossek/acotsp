@@ -130,11 +130,9 @@ aco = function(x,
     # valid tour.
     ants.tours = matrix(NA, ncol = n, nrow = n.ants)
 
-    pher.mat.storage = ants.tours.storage = best.tour.storage = NULL
+    storage = NULL
     if (trace.all) {
-        pher.mat.storage = vector(mode = "list", length = max.iter)
-        ants.tours.storage = vector(mode = "list", length = max.iter)
-        best.tour.storage = vector(mode = "list", length = max.iter)
+        storage = list()
     }
 
     repeat {
@@ -213,14 +211,15 @@ aco = function(x,
 
         pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc)
         if (trace.all) {
-            pher.mat.storage[[iter]] = pher.mat
-            ants.tours.storage[[iter]] = ants.tours
-            best.tour.storage[[iter]] = best.tour
+            storage[[iter]] = list(
+                pher.mat = pher.mat,
+                ants.tours = ants.tours,
+                best.tour = best.tour
+            )
         }
         iter.times[iter %% 5] = difftime(Sys.time(), iter.start.time, units = "secs")
         iter = iter + 1L
     }
-
 
     makeS3Obj(
         call = match.call(),
@@ -231,11 +230,7 @@ aco = function(x,
         opt.path = opt.path,
         time.passed = difftime(Sys.time(), start.time, units = "secs"),
         iters.done = iter,
-        storage = list(
-            pher.mat.storage = pher.mat.storage,
-            ants.tours.storage = ants.tours.storage,
-            best.tour.storage = best.tour.storage
-        ),
+        storage = storage,
         termination.code = termination.code,
         termination.message = getTerminationMessage(termination.code),
         classes = "AntsResult"
