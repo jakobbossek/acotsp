@@ -26,7 +26,7 @@ print.AntsResult = function(x, ...) {
 collapseList = function(l, sep = ";") {
     ns = names(l)
     res = lapply(1:length(l), function(i) {
-        paste(ns[i], i, sep = "=")
+        paste(ns[i], l[[i]], sep = "=")
     })
     collapse(unlist(res), sep)
 }
