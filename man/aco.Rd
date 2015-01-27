@@ -9,7 +9,7 @@ Salesperson Problem} (TSP).}
 aco(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 1e-04, min.pher.conc = 0, max.pher.conc = 1e+06,
   max.iter = 10L, max.time = Inf, global.opt.value = NULL,
-  termination.eps = 0.1, show.info = FALSE)
+  termination.eps = 0.1, show.info = FALSE, trace.all = FALSE)
 }
 \arguments{
 \item{x}{[\code{Network}]\cr
@@ -69,6 +69,12 @@ If \code{TRUE}, which is the default value, some information is printed to
 the standard output during execution. Default is \code{FALSE}, which means
 that the algorithm behaves like a typical Unix terminal program. It stops
 on failure with a cryptic message and stops on success with no message.}
+
+\item{trace.all}{[\code{logical(1)}]\cr
+Should we save additional information in each iteration, i. e., pheromone
+matrix, all ant trails, best ant trail of the current iteration and so on?
+Default is \code{FALSE}. You need to set this to \code{TRUE} if you want
+to plot the optimization progress via \code{autoplot.AntsResult}.}
 }
 \value{
 [\code{AntsResult}]

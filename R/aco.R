@@ -48,6 +48,11 @@
 #'   the standard output during execution. Default is \code{FALSE}, which means
 #'   that the algorithm behaves like a typical Unix terminal program. It stops
 #'   on failure with a cryptic message and stops on success with no message.
+#' @param trace.all [\code{logical(1)}]\cr
+#'   Should we save additional information in each iteration, i. e., pheromone
+#'   matrix, all ant trails, best ant trail of the current iteration and so on?
+#'   Default is \code{FALSE}. You need to set this to \code{TRUE} if you want
+#'   to plot the optimization progress via \code{autoplot.AntsResult}.
 #' @return [\code{AntsResult}]
 #'   S3 object containing the result.
 #' @keywords Optimization
