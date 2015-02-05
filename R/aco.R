@@ -58,7 +58,7 @@
 #' @keywords Optimization
 #' @examples
 #'   library(netgen)
-#'   x = generateRandomInstance(n.points = 6L)
+#'   x = generateRandomNetwork(n.points = 6L)
 #'   res = aco(x, alpha = 1.2, beta = 1.8, n.ants = 15L, init.pher.conc = 0.01, max.iter = 10L)
 #'   print(res)
 #'

@@ -1,7 +1,7 @@
 context("ploting")
 
 test_that("plotIteration works", {
-    x = netgen::generateRandomInstance(n.points = 15L)
+    x = netgen::generateRandomNetwork(n.points = 15L)
     res = aco(x, max.iter = 5L, n.ants = 10L, rho = 0.1, trace.all = TRUE)
     storage = res$storage
 
