@@ -17,3 +17,5 @@ Imports:
     ggplot2
 Suggests:
     testthat
+ByteCompile: yes
+LazyData: yes
