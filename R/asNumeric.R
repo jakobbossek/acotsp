@@ -8,8 +8,8 @@
 #'    Currenly not used.
 #' @export
 as.numeric.AntsResult = function(x, close = FALSE, ...) {
-    tour = x$best.tour
-    if (close)
-        tour = c(tour, tour[1])
-    return(tour)
+  tour = x$best.tour
+  if (close)
+    tour = c(tour, tour[1])
+  return(tour)
 }
