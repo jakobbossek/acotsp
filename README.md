@@ -1,10 +1,12 @@
-# ants: Ant Colony Optimiation framework (ACO) for the TSP
+# ants: Ant Colony Optimiation (ACO) for the TSP
 
-Travis CI build status: [![Build Status](https://travis-ci.org/jakobbossek/ants.svg?branch=master)](https://travis-ci.org/jakobbossek/ants)
+[![Build Status](https://travis-ci.org/jakobbossek/ants.svg?branch=master)](https://travis-ci.org/jakobbossek/ants)
+[![Build status](https://ci.appveyor.com/api/projects/status/ub5xs7w5fudee7g7/branch/master?svg=true)](https://ci.appveyor.com/project/jakobbossek/ants/branch/master)
+[![Coverage Status](https://coveralls.io/repos/jakobbossek/ants/badge.svg)](https://coveralls.io/r/jakobbossek/ants)
 
 **Note:** this package is under heavy developement in the moment.
 
-## Descritption
+## Description
 
 ### How it works
 The idea behind ant colony  algorithms are observations of real ant colonies: ants leave their den, choose a direction randomly and search for food. On their way each ant leaves a pheromone trace, which evaporates slowly. If an ant found something to eat, it heads back to
@@ -13,7 +15,7 @@ by the amount of trace on it. This way short pathes which are used often get an 
 higher pheromone concentration since more ants use it and longer pathes pheromone
 concentration evaporates. In that manner sooner or later all the ants will use this ant highway, the socalled *ant trail*.
 
-### What does the package offer?
+# What does the package offer?
 ACO algorithms transfer this natural collective intelligence into algorithms for
 solving hard computational problems. This package impelements the Ant Colony Optimization (ACO) framework as an optimizer for the popular [Travelling Salesperson Problem](http://en.wikipedia.org/wiki/Travelling_salesman_problem) (TSP). 
 
