@@ -1,6 +1,6 @@
 Package: ants
 Type: Package
-Title: Ant Colony Optimization for the Travelling Salesperson Probblem
+Title: Ant Colony Optimization for the Travelling Salesperson Problem
 Description: Implements a variety of Ant Colony Optimization (ACO) framework conform solvers for the popular Travelling Salesperson Problem (TSP).
 Version: 1.0
 Date: 2015-01-21
@@ -11,7 +11,7 @@ License: BSD_3_clause + file LICENSE
 Depends:
     BBmisc (>= 1.6),
     ParamHelpers (>= 1.5),
-    netgen (>= 1.0)
+    netgen (>= 1.1)
 Imports:
     checkmate (>= 1.5.1),
     ggplot2

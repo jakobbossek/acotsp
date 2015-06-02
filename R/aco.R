@@ -10,17 +10,17 @@
 #' @param n.ants [\code{integer(1)}]\cr
 #'   Number of ants. Positive integer.
 #' @param alpha [\code{numeric(1)}]\cr
-#'   This parameter decided how much influence the pheromones on an edge have
+#'   This parameter decides how much influence the pheromones on an edge have
 #'   on the selection of edges. Default is \code{1}.
 #' @param beta [\code{numeric(1)}]\cr
-#'   This parameter decided how much influence the edges distances have
-#'   on the selection of edges.
+#'   This parameter decided how much influence the edge distances have
+#'   on the selection of edges. Default is \code{2}.
 #' @param rho [\code{numeric(1)}]\cr
 #'   \dQuote{Pheromone evaporation coefficient} respectively \dQuote{evaporation rate}.
-#'   In each iteration the pheromone on edge (i,j) are first decreased by (1 - rho)
+#'   In each iteration the pheromones on edge (i,j) are first decreased by (1 - rho)
 #'   before ants deposit their pheromones on it. Must be in (0, 1). Default is \code{0.1}.
 #' @param att.factor [\code{numeric(1)}]\cr
-#'   Constant attractiveness factor. Default is \code{1}.
+#'   This is the socalled \dQuote{constant attractiveness factor}. Default is \code{1}.
 #' @param init.pher.conc [\code{numeric(1)}]\cr
 #'   Initial pheromone concentration for every single edge. Default is \code{0.0001}.
 #' @param min.pher.conc [\code{numeric(1)}]\cr
@@ -84,7 +84,7 @@ aco = function(x,
   assertClass(x, "Network")
 
   # generate distance matrix d(i, j)
-  dist.mat = as.matrix(dist(x$coordinates, method = "euclidean"))
+  dist.mat = x$distance.matrix
   n = getNumberOfNodes(x)
 
   # init termination criteria values
@@ -100,13 +100,12 @@ aco = function(x,
     max.iter = convertInteger(max.iter)
   }
   assertInt(max.iter, lower = 1L, na.ok = FALSE)
-  #FIXME: allow value to be NULL explicitely via null.ok = TRUE in checkmate would be great
   if (!is.null(global.opt.value)) {
     assertNumber(global.opt.value, na.ok = FALSE, finite = TRUE)
   }
   assertNumber(termination.eps, lower = 0.000001, finite = TRUE, na.ok = FALSE)
 
-    # do sanity checks
+  # do sanity checks
   assertInteger(n.ants, lower = 1)
   assertNumber(alpha, lower = 0, finite = TRUE, na.ok = FALSE)
   assertNumber(beta, lower = 1, finite = TRUE, na.ok = FALSE)
@@ -142,16 +141,16 @@ aco = function(x,
       print(round(pher.mat, digits = 2))
       catf("----------------")
     }
-        # initialize first ant tours, i. e., select a start node randomly and
-        # construct a valid tour
-        #FIXME: move this to dedicated function 'searchForFood' or findAntTrails
+    # initialize first ant tours, i. e., select a start node randomly and
+    # construct a valid tour
+    #FIXME: move this to dedicated function 'searchForFood' or findAntTrails
     for (ant in seq(n.ants)) {
-            #FIXME: this is O(n^2). Research method to make this more effective!
-      start = sample(1:n, size = 1)
-      ants.tours[ant, 1] = start
+      #FIXME: this is O(n^2). Research method to make this more effective!
+      start = sample(seq(n), size = 1L)
+      ants.tours[ant, 1L] = start
       used = logical(n)
       used[start] = TRUE
-      i = 2
+      i = 2L
       while (any(!used)) {
         probs = getTransitionProbabilities(start, used, alpha, beta, dist.mat, pher.mat)
         unused.idx = which(!used)
@@ -159,10 +158,11 @@ aco = function(x,
         #print(unused.idx)
         #print(probs)
         #FIXME: what is going on here? sample(1, 1, prob = 1) works! Why not here?
-        if (length(probs) > 1L)
+        if (length(probs) > 1L) {
           dest = sample(unused.idx, size = 1, prob = probs)
-        else
+        } else {
           dest = unused.idx
+        }
         used[dest] = TRUE
         ants.tours[ant, i] = dest
         start = dest
@@ -171,7 +171,7 @@ aco = function(x,
     }
 
     # get tour length
-    ants.tour.lengths = apply(ants.tours, 1, function(x) {
+    ants.tour.lengths = apply(ants.tours, 1L, function(x) {
       getTourLength(x, dist.mat)
     })
 
@@ -215,7 +215,7 @@ aco = function(x,
         pher.mat = pher.mat,
         ants.tours = ants.tours,
         best.tour = best.tour
-        )
+      )
     }
     iter.times[iter %% 5] = difftime(Sys.time(), iter.start.time, units = "secs")
     iter = iter + 1L
@@ -260,7 +260,7 @@ getTransitionProbabilities = function(start, used, alpha, beta, dist.mat, pher.m
   probs = sapply(unused.idx, function(dest) {
     (pher.mat[start, dest])^alpha * (1 / dist.mat[start, dest])^beta
   })
-  (probs / sum(probs))
+  return(probs / sum(probs))
 }
 
 # Checks whether an ant has used an edge on its trail.
@@ -336,8 +336,8 @@ getTourLength = function(tour, dist.mat) {
   tour.length = 0
   n = length(tour)
   for (i in 1:(n - 1)) {
-    tour.length = tour.length + dist.mat[tour[i], tour[i + 1]]
+    tour.length = tour.length + dist.mat[tour[i], tour[i + 1L]]
   }
-  tour.length = tour.length + dist.mat[tour[n], tour[1]]
+  tour.length = tour.length + dist.mat[tour[n], tour[1L]]
   return(tour.length)
 }
