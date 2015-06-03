@@ -34,6 +34,10 @@
 #'   Probability used in the pseudo-random-proportional action choice rule used, e.g., by
 #'   the Ant Colony System. Default is 0, which means that the rule is not applied
 #'   at all and the tour construction is done in the classical way.
+#' @param local.pher.update.fun [\code{function}]\cr
+#'   Local (pheromone) update rule applied right after an ant crossed an edge. Default
+#'   is \code{NULL}, which means no local update at all. This must be a function which
+#'   expects a single parameter \code{pher}.
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
 #' @param max.time [\code{integer(1)}]\cr
@@ -79,6 +83,7 @@ aco = function(x,
   init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
   pher.conc.in.bounds = TRUE,
   prp.prob = 0,
+  local.pher.update.fun = NULL,
   max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
   show.info = FALSE, trace.all = FALSE) {
 
@@ -118,7 +123,12 @@ aco = function(x,
   assertNumber(min.pher.conc, lower = 0, finite = TRUE, na.ok = FALSE)
   assertNumber(max.pher.conc, lower = 1, finite = TRUE, na.ok = FALSE)
   assertFlag(pher.conc.in.bounds)
-  assertNumber(rho, lower = 0, upper = 1, na.ok = FALSE)
+  assertNumber(prp.prob, lower = 0, upper = 1, na.ok = FALSE)
+
+  if (!is.null(local.pher.update.fun)) {
+    assertFunction(local.pher.update.fun, args = "pher")
+  }
+  doLocalPheromoneUpdate = local.pher.update.fun
 
   best.tour.length = Inf
   best.tour = rep(NA, n)
@@ -147,10 +157,6 @@ aco = function(x,
   repeat {
     iter.start.time = Sys.time()
 
-    if (show.info) {
-      print(round(pher.mat, digits = 2))
-      catf("----------------")
-    }
     # initialize first ant tours, i. e., select a start node randomly and
     # construct a valid tour
     for (ant in seq(n.ants)) {
@@ -161,18 +167,20 @@ aco = function(x,
       used[start] = TRUE
       i = 2L
       while (any(!used)) {
-        #catf("%i , %i", length(unused.idx), length(probs))
-        #print(unused.idx)
-        #print(probs)
         dest = getNextEdgeOnTrail(start, used, alpha, beta, dist.mat, pher.mat, prp.prob)
         used[dest] = TRUE
+
+        # do local pheromone update
+        if (!is.null(doLocalPheromoneUpdate)) {
+          pher.mat[start, dest] = doLocalPheromoneUpdate(pher.mat[start, dest])
+        }
         ants.tours[ant, i] = dest
         start = dest
         i = i + 1L
       }
     }
 
-    # get tour length (rowwise)
+    # get tour length (row-wise)
     ants.tour.lengths = apply(ants.tours, 1L, getTourLength, dist.mat = dist.mat)
 
     # get best tour length of this iteration
@@ -217,7 +225,11 @@ aco = function(x,
 
     # update pheromone trails.
     # This is where the different ACO systems differ most!
-    pher.mat = updatePheromoneMatrix(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc)
+    pher.mat = updatePheromoneMatrix(
+      pher.mat, dist.mat,
+      ants.tours, ants.tour.lengths,
+      rho, att.factor, min.pher.conc, max.pher.conc
+    )
 
     # store all the stuff in neccessary
     if (trace.all) {
