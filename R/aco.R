@@ -30,6 +30,10 @@
 #' @param pher.conc.in.bounds [\code{logical(1)}]\cr
 #'   Should the pheromone concentration be bounded by \code{min.pher.conc} and \code{max.pher.conc}?
 #'   Default is \code{TRUE}.
+#' @param prp.prob [\code{numeric(1)}]\cr
+#'   Probability used in the pseudo-random-proportional action choice rule used, e.g., by
+#'   the Ant Colony System. Default is 0, which means that the rule is not applied
+#'   at all and the tour construction is done in the classical way.
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
 #' @param max.time [\code{integer(1)}]\cr
@@ -113,6 +117,7 @@ aco = function(x,
   assertNumber(min.pher.conc, lower = 0, finite = TRUE, na.ok = FALSE)
   assertNumber(max.pher.conc, lower = 1, finite = TRUE, na.ok = FALSE)
   assertFlag(pher.conc.in.bounds)
+  assertNumber(rho, lower = 0, upper = 1, na.ok = FALSE)
 
   best.tour.length = Inf
   best.tour = rep(NA, n)
@@ -147,7 +152,6 @@ aco = function(x,
     }
     # initialize first ant tours, i. e., select a start node randomly and
     # construct a valid tour
-    #FIXME: move this to dedicated function 'searchForFood' or findAntTrails
     for (ant in seq(n.ants)) {
       #FIXME: this is O(n^2). Research method to make this more effective!
       start = sample(seq(n), size = 1L)
@@ -156,17 +160,10 @@ aco = function(x,
       used[start] = TRUE
       i = 2L
       while (any(!used)) {
-        probs = getTransitionProbabilities(start, used, alpha, beta, dist.mat, pher.mat)
-        unused.idx = which(!used)
         #catf("%i , %i", length(unused.idx), length(probs))
         #print(unused.idx)
         #print(probs)
-        #FIXME: what is going on here? sample(1, 1, prob = 1) works! Why not here?
-        if (length(probs) > 1L) {
-          dest = sample(unused.idx, size = 1, prob = probs)
-        } else {
-          dest = unused.idx
-        }
+        dest = getNextEdgeOnTrail(start, used, alpha, beta, dist.mat, pher.mat, prp.prob)
         used[dest] = TRUE
         ants.tours[ant, i] = dest
         start = dest
@@ -174,7 +171,7 @@ aco = function(x,
       }
     }
 
-    # get tour length
+    # get tour length (rowwise)
     ants.tour.lengths = apply(ants.tours, 1L, getTourLength, dist.mat = dist.mat)
 
     # get best tour length of this iteration
@@ -250,6 +247,47 @@ aco = function(x,
   )
 }
 
+# Get the next edge during trail construction.
+#
+# @param start [\code{integer(1)}]
+#   Node id of the source node.
+# @param used [logical]
+#   Logical vector. If used[i] is TRUE, the i-th city has already been visited.
+# @param alpha [integer(1)]
+#   See aco documentation.
+# @param beta [integer(1)]
+#   See aco documentation.
+# @param dist.mat [matrix]
+#   Distance matrix.
+# @param pher.mat [matrix]
+#   Pheromone matrix.
+# @return [integer(1)] Node id of the next node to visit.
+getNextEdgeOnTrail = function(start, used, alpha, beta, dist.mat, pher.mat) {
+  # get the IDs of the nodes, which are not yet included in the tour
+  unused.idx = which(!used)
+  # Here we apply the socalled "pseudo-random-proportional action choice rule"
+  # (See Stützle and Dorigo - ACO Algorithms for the Travelling Salesman Problem)
+  if (runif(1) <= prp.prob) {
+    # get the unvisited city which is most promising according to pheromone
+    # concentration and distance
+    vals = sapply(unused.idx, function(dest) {
+      pher.mat[start, dest] * (1 / dist.mat[start, dest])^beta
+    })
+    dest = unused.idx[which.max(vals)]
+  } else {
+    # use the familiar formula to compute probabilities
+    probs = getTransitionProbabilities(start, used, alpha, beta, dist.mat, pher.mat)
+    #FIXME: what is going on here? sample(1, 1, prob = 1) works! Why not here?
+    if (length(probs) > 1L) {
+      dest = sample(unused.idx, size = 1, prob = probs)
+    } else {
+      dest = unused.idx
+    }
+  }
+  return(dest)
+}
+
+
 # Get the transition probabilities which ants use to determine randomly which
 # edges to choose next.
 #
@@ -315,13 +353,22 @@ hasAntUsedEdge = function(tour, start, end) {
 #FIXME: ugly as sin!!!
 #FIXME: Save used edges during tour constuction!
 updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc) {
+  getEliteAnts = function(ants.tours, tour.length, n.elite) {
+    # order ants accoridng to the tour length in increasing order and select the
+    # n.elite best
+    idx = order(tour.length, decreasing = FALSE)[seq(n.elite)]
+    return(idx)
+  }
+
   n = nrow(pher.mat)
   # first evaporate all edges
   pher.mat = (1 - rho) * pher.mat
   n.ants = length(tour.lengths)
+  elite.ants = getEliteAnts(ants.tours, tour.lengths, n.ants)
+
   for (i in seq(n)) {
     for (j in seq(n)) {
-      ants.pher.evap = sapply(seq(n.ants), function(k) {
+      ants.pher.evap = sapply(elite.ants, function(k) {
         if (hasAntUsedEdge(ants.tours[k, ], i, j)) att.factor / tour.lengths[k] else 0
       })
       pher.mat[i, j] = pher.mat[i, j] + sum(ants.pher.evap)
