@@ -27,6 +27,9 @@
 #'   Minimal pheromone concentration for every single edge. Default is \code{0}.
 #' @param max.pher.conc [\code{numeric(1)}]\cr
 #'   Maximal pheromone concentration for every single edge. Default is \code{10e5}.
+#' @param pher.conc.in.bounds [\code{logical(1)}]\cr
+#'   Should the pheromone concentration be bounded by \code{min.pher.conc} and \code{max.pher.conc}?
+#'   Default is \code{TRUE}.
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
 #' @param max.time [\code{integer(1)}]\cr
@@ -70,6 +73,7 @@ aco = function(x,
   n.ants = 2L,
   alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
+  pher.conc.in.bounds = TRUE,
   max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
   show.info = FALSE, trace.all = FALSE) {
 
@@ -80,17 +84,11 @@ aco = function(x,
     min.pher.conc = min.pher.conc, max.pher.conc = max.pher.conc
   )
 
-  #FIXME: do we need special class here? We need the distance matrix.
   assertClass(x, "Network")
-
-  # generate distance matrix d(i, j)
   dist.mat = x$distance.matrix
   n = getNumberOfNodes(x)
 
-  # init termination criteria values
-  start.time = Sys.time()
-  iter.times = numeric(5L)
-  iter = 1L
+  # do sanity checks
   if (is.finite(max.time)) {
     max.time = convertInteger(max.time)
   }
@@ -114,6 +112,7 @@ aco = function(x,
   assertNumber(init.pher.conc, lower = 0.0001, finite = TRUE, na.ok = FALSE)
   assertNumber(min.pher.conc, lower = 0, finite = TRUE, na.ok = FALSE)
   assertNumber(max.pher.conc, lower = 1, finite = TRUE, na.ok = FALSE)
+  assertFlag(pher.conc.in.bounds)
 
   best.tour.length = Inf
   best.tour = rep(NA, n)
@@ -128,6 +127,11 @@ aco = function(x,
   # Each row of the matrix contains a permutation of {1,...,n}, i. e., a
   # valid tour.
   ants.tours = matrix(NA, ncol = n, nrow = n.ants)
+
+  # init termination criteria values
+  start.time = Sys.time()
+  iter.times = numeric(5L)
+  iter = 1L
 
   storage = NULL
   if (trace.all) {
@@ -171,18 +175,20 @@ aco = function(x,
     }
 
     # get tour length
-    ants.tour.lengths = apply(ants.tours, 1L, function(x) {
-      getTourLength(x, dist.mat)
-    })
+    ants.tour.lengths = apply(ants.tours, 1L, getTourLength, dist.mat = dist.mat)
 
+    # get best tour length of this iteration
     best.current.ant = which.min(ants.tour.lengths)
     best.current.tour.length = ants.tour.lengths[best.current.ant]
     best.current.tour = ants.tours[best.current.ant, ]
+
+    # update optimization path
     addOptPathEl(opt.path, x = list(best.current.tour), y = best.current.tour.length)
     if (best.current.tour.length < best.tour.length) {
       best.tour.length = best.current.tour.length
       best.tour = best.current.tour
     }
+
     if (show.info) {
       catf("======")
       catf("Current iteration: %i", i)
@@ -194,6 +200,8 @@ aco = function(x,
       catf("Best tour length: %f", best.tour.length)
       catf("Best tour: %s", collapse(best.tour, sep = ", "))
     }
+
+    #FIXME: this is ugly
     termination.code = getTerminationCode(
       current.iter = iter,
       max.iter = max.iter,
@@ -203,13 +211,17 @@ aco = function(x,
       start.time = start.time,
       max.time = max.time,
       iter.times = iter.times
-      )
+    )
 
     if (termination.code > -1L) {
       break
     }
 
+    # update pheromone trails.
+    # This is where the different ACO systems differ most!
     pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc)
+
+    # store all the stuff in neccessary
     if (trace.all) {
       storage[[iter]] = list(
         pher.mat = pher.mat,
@@ -217,6 +229,7 @@ aco = function(x,
         best.tour = best.tour
       )
     }
+
     iter.times[iter %% 5] = difftime(Sys.time(), iter.start.time, units = "secs")
     iter = iter + 1L
   }
@@ -236,7 +249,6 @@ aco = function(x,
     classes = "AntsResult"
   )
 }
-
 
 # Get the transition probabilities which ants use to determine randomly which
 # edges to choose next.
