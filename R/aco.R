@@ -78,6 +78,7 @@ aco = function(x,
   alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
   pher.conc.in.bounds = TRUE,
+  prp.prob = 0,
   max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
   show.info = FALSE, trace.all = FALSE) {
 
@@ -216,7 +217,7 @@ aco = function(x,
 
     # update pheromone trails.
     # This is where the different ACO systems differ most!
-    pher.mat = updatePheromones(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc)
+    pher.mat = updatePheromoneMatrix(pher.mat, dist.mat, ants.tours, ants.tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc)
 
     # store all the stuff in neccessary
     if (trace.all) {
@@ -262,7 +263,7 @@ aco = function(x,
 # @param pher.mat [matrix]
 #   Pheromone matrix.
 # @return [integer(1)] Node id of the next node to visit.
-getNextEdgeOnTrail = function(start, used, alpha, beta, dist.mat, pher.mat) {
+getNextEdgeOnTrail = function(start, used, alpha, beta, dist.mat, pher.mat, prp.prob) {
   # get the IDs of the nodes, which are not yet included in the tour
   unused.idx = which(!used)
   # Here we apply the socalled "pseudo-random-proportional action choice rule"
@@ -350,9 +351,7 @@ hasAntUsedEdge = function(tour, start, end) {
 #   Constant attractiveness factor.
 # @return [matrix]
 #   Updated pheromone matrix.
-#FIXME: ugly as sin!!!
-#FIXME: Save used edges during tour constuction!
-updatePheromones = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc) {
+updatePheromoneMatrix = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc) {
   getEliteAnts = function(ants.tours, tour.length, n.elite) {
     # order ants accoridng to the tour length in increasing order and select the
     # n.elite best
