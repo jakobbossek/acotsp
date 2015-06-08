@@ -4,15 +4,10 @@
 #'
 #' Implementation of the classical Ant System (AS) introduced by Dorigo.
 #'
-#' @param x [\code{Network}]\cr
-#'   A network, i. e., a graph generated with the \pkg{netgen} package.
-#'   See \code{\link[netgen]{makeNetwork}} for details.
+#' @template arg_network
 #' @param control [\code{AntsControl}]\cr
 #'   Control object. See \code{\link{makeAntsControl}}.
-#' @param monitor [\code{AntsMonitor}]\cr
-#'   Monitor object of type \code{AntsMonitor}. Determines how to visualize the
-#'   optimization process. Default is not visualization. See \code{\link{makeConsoleMonitor}}
-#'   for basic console output.
+#' @template arg_monitor
 #' @return [\code{AntsResult}]
 #'   S3 result object.
 #' @keywords Optimization
