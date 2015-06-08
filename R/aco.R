@@ -9,13 +9,18 @@
 #'   See \code{\link[netgen]{makeNetwork}} for details.
 #' @param control [\code{AntsControl}]\cr
 #'   Control object. See \code{\link{makeAntsControl}}.
+#' @param show.info [\code{logical(1)}]\cr
+#'   Should logging messages be printed to the console? Default is \code{FALSE}.
 #' @return [\code{AntsResult}]
 #'   S3 result object.
 #' @keywords Optimization
 #' @examples
 #'   library(netgen)
 #'   x = generateRandomNetwork(n.points = 6L)
-#'   ctrl = makeAntsControl(alpha = 1.2, beta = 1.8, n.ants = 15L, init.pher.conc = 0.01, max.iter = 10L)
+#'   ctrl = makeAntsControl(
+#'     alpha = 1.2, beta = 1.8, n.ants = 15L,
+#'     init.pher.conc = 0.01, max.iter = 10L
+#'   )
 #'   res = aco(x, ctrl)
 #'   print(res)
 #'
@@ -25,35 +30,34 @@
 #'   res = aco(x, ctrl, show.info = TRUE)
 #' @export
 aco = function(x, control, show.info = TRUE) {
-
-  # used.arguments = list(
-  #   n.ants = n.ants,
-  #   alpha = alpha, beta = beta, rho = rho, att.factor = att.factor,
-  #   init.pher.conc = init.pher.conc,
-  #   min.pher.conc = min.pher.conc, max.pher.conc = max.pher.conc
-  # )
-
   assertClass(x, "Network")
+  assertClass(control, "AntsControl")
+  assertFlag(show.info)
+
+  # extract some instance information
   dist.mat = x$distance.matrix
   n = getNumberOfNodes(x)
 
-  doLocalPheromoneUpdate = control$local.pher.update.fun
-
+  # init storage for best tour
   best.tour.length = Inf
   best.tour = rep(NA, n)
 
   n.ants = control$n.ants
   alpha = control$alpha
   beta = control$beta
-  pher.mat = matrix(control$init.pher.conc, ncol = n, nrow = n)
+  doLocalPheromoneUpdate = control$local.pher.update.fun
+
+  # init opt path
   par.set = makeNumericParamSet("n", len = n, lower = 1, upper = n)
   opt.path = makeOptPathDF(par.set, "tour.length", minimize = TRUE, )
 
+  # init ants and pheromones
   # initialize ants! We keep them implicitely, i. e., we keep an (m x n)
   # matrix, where m is the number of ants and n is the number of nodes
   # of the problem instance at hand.
   # Each row of the matrix contains a permutation of {1,...,n}, i. e., a
   # valid tour.
+  pher.mat = matrix(control$init.pher.conc, ncol = n, nrow = n)
   ants.tours = matrix(NA, ncol = n, nrow = control$n.ants)
 
   # init termination criteria values

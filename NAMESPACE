@@ -3,6 +3,7 @@
 S3method(as.numeric,AntsResult)
 S3method(print,AntsResult)
 export(aco)
+export(makeAntsControl)
 export(plotIteration)
 import(BBmisc)
 import(ParamHelpers)

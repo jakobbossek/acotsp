@@ -6,79 +6,22 @@
 \href{http://en.wikipedia.org/wiki/Travelling_salesman_problem}{Travelling
 Salesperson Problem} (TSP).}
 \usage{
-aco(x, n.ants = 2L, alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
-  init.pher.conc = 1e-04, min.pher.conc = 0, max.pher.conc = 1e+06,
-  max.iter = 10L, max.time = Inf, global.opt.value = NULL,
-  termination.eps = 0.1, show.info = FALSE, trace.all = FALSE)
+aco(x, control, show.info = TRUE)
 }
 \arguments{
 \item{x}{[\code{Network}]\cr
 A network, i. e., a graph generated with the \pkg{netgen} package.
 See \code{\link[netgen]{makeNetwork}} for details.}
 
-\item{n.ants}{[\code{integer(1)}]\cr
-Number of ants. Positive integer.}
-
-\item{alpha}{[\code{numeric(1)}]\cr
-This parameter decides how much influence the pheromones on an edge have
-on the selection of edges. Default is \code{1}.}
-
-\item{beta}{[\code{numeric(1)}]\cr
-This parameter decided how much influence the edge distances have
-on the selection of edges. Default is \code{2}.}
-
-\item{rho}{[\code{numeric(1)}]\cr
-\dQuote{Pheromone evaporation coefficient} respectively \dQuote{evaporation rate}.
-In each iteration the pheromones on edge (i,j) are first decreased by (1 - rho)
-before ants deposit their pheromones on it. Must be in (0, 1). Default is \code{0.1}.}
-
-\item{att.factor}{[\code{numeric(1)}]\cr
-This is the socalled \dQuote{constant attractiveness factor}. Default is \code{1}.}
-
-\item{init.pher.conc}{[\code{numeric(1)}]\cr
-Initial pheromone concentration for every single edge. Default is \code{0.0001}.}
-
-\item{min.pher.conc}{[\code{numeric(1)}]\cr
-Minimal pheromone concentration for every single edge. Default is \code{0}.}
-
-\item{max.pher.conc}{[\code{numeric(1)}]\cr
-Maximal pheromone concentration for every single edge. Default is \code{10e5}.}
-
-\item{max.iter}{[\code{integer(1)}]\cr
-Maximal number of iterations. Default is \code{10}.}
-
-\item{max.time}{[\code{integer(1)}]\cr
-Maximum running time in seconds. The algorithm tries hard to hold this
-restriction by logging the times of a number of prior iterations and
-determining statistically whether the time limit can be hold when another
-iteration is done. Default ist \code{Inf}, which means no time limit at all.}
-
-\item{global.opt.value}{[\code{numeric(1)}]\cr
-Known global best tour length. This can be used as another termination
-criterion. Default is \code{NULL}, which means, that the length of the
-globally best tour is unknown.}
-
-\item{termination.eps}{[\code{numeric(1)}]\cr
-If \code{global.opt.value} is set, the algorithm stops if the quadratic
-distance between the global optimum value and the value of the best tour
-found so far is lower than these gap value. Ignored if \code{global.opt.value}
-is \code{NULL}.}
+\item{control}{[\code{AntsControl}]\cr
+Control object. See \code{\link{makeAntsControl}}.}
 
 \item{show.info}{[\code{logical(1)}]\cr
-If \code{TRUE}, which is the default value, some information is printed to
-the standard output during execution. Default is \code{FALSE}, which means
-that the algorithm behaves like a typical Unix terminal program. It stops
-on failure with a cryptic message and stops on success with no message.}
-
-\item{trace.all}{[\code{logical(1)}]\cr
-Should we save additional information in each iteration, i. e., pheromone
-matrix, all ant trails, best ant trail of the current iteration and so on?
-Default is \code{FALSE}. You need to set this to \code{TRUE} if you want
-to plot the optimization progress via \code{autoplot.AntsResult}.}
+Should logging messages be printed to the console? Default is \code{FALSE}.}
 }
 \value{
 [\code{AntsResult}]
-  S3 object containing the result.
+  S3 result object.
 }
 \description{
 Implementation of the classical Ant System (AS) introduced by Dorigo.
@@ -86,12 +29,17 @@ Implementation of the classical Ant System (AS) introduced by Dorigo.
 \examples{
 library(netgen)
   x = generateRandomNetwork(n.points = 6L)
-  res = aco(x, alpha = 1.2, beta = 1.8, n.ants = 15L, init.pher.conc = 0.01, max.iter = 10L)
+  ctrl = makeAntsControl(
+    alpha = 1.2, beta = 1.8, n.ants = 15L,
+    init.pher.conc = 0.01, max.iter = 10L
+  )
+  res = aco(x, ctrl)
   print(res)
 
   x = matrix(c(1, 2, 1, 3, 1, 4, 3, 1, 3, 2, 3, 4), ncol = 2, byrow = TRUE)
   x = makeNetwork(x, lower = 1, upper = 4)
-  res = aco(x, max.iter = 30L, n.ants = 20L, show.info = TRUE)
+  ctrl = makeAntsControl(alpha = 1.2, beta = 1.8, n.ants = 20L, max.iter = 30L)
+  res = aco(x, ctrl, show.info = TRUE)
 }
 \keyword{Optimization}
 
