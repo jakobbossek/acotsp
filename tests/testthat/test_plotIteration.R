@@ -2,7 +2,8 @@ context("ploting")
 
 test_that("plotIteration works", {
   x = netgen::generateRandomNetwork(n.points = 15L)
-  res = aco(x, max.iter = 5L, n.ants = 10L, rho = 0.1, trace.all = TRUE)
+  ctrl = makeAntsControl(max.iter = 5L, n.ants = 10L, rho = 0.1, trace.all = TRUE)
+  res = aco(x, ctrl, show.info = FALSE)
   storage = res$storage
 
   expect_true(!is.null(storage))
