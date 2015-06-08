@@ -5,6 +5,15 @@
 #'
 #' @param n.ants [\code{integer(1)}]\cr
 #'   Number of ants. Positive integer.
+#' @param n.elite [\code{integer(1)}]\cr
+#'   Number of \dQuote{elite} ants. Only the \code{n.elite} best ants are allowed to deposit
+#'   pheromones during the update phase. Must me lower than or equal to \code{n.ants}.
+#'   Default is \code{n.elite = n.ants}.
+#' @param use.global.best [\code{logical(1)}]\cr
+#'   Should the global best tour be used to update the pheromones? Default is \code{FALSE}.
+#'   Keep in mind: if \code{use.global.best} is \code{TRUE} and \code{n.elite} is
+#'   0, only the global best tour (and consequently only the arcs of the global best
+#'   tour) gain pheromones in each iteration.
 #' @param alpha [\code{numeric(1)}]\cr
 #'   This parameter decides how much influence the pheromones on an edge have
 #'   on the selection of edges. Default is \code{1}.
@@ -60,6 +69,8 @@
 #' @export
 makeAntsControl = function(
   n.ants = 2L,
+  n.elite = n.ants,
+  use.global.best = FALSE,
   alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
   pher.conc.in.bounds = TRUE,
@@ -69,7 +80,16 @@ makeAntsControl = function(
   trace.all = FALSE) {
 
   # do sanity checks
-  assertInteger(n.ants, lower = 1)
+  assertInteger(n.ants, lower = 1L)
+  assertInteger(n.elite, lower = 0L)
+  if (n.elite > n.ants) {
+    stopf("n.elite must be lower or equal to n.ants, but %i = n.elite > n.ants = %i", n.elite, n.ants)
+  }
+  assertFlag(use.global.best)
+  if (n.elite == 0 && !use.global.best) {
+    stopf("Zero elite ants and no global update not allowed! Somehow the pheromones need
+      to be updated.")
+  }
   assertNumber(alpha, lower = 0, finite = TRUE, na.ok = FALSE)
   assertNumber(beta, lower = 1, finite = TRUE, na.ok = FALSE)
   assertNumber(rho, lower = 0, upper = 1, na.ok = FALSE)
@@ -100,6 +120,8 @@ makeAntsControl = function(
 
   makeS3Obj(
     n.ants = n.ants,
+    n.elite = n.elite,
+    use.global.best = use.global.best,
     alpha = alpha,
     beta = beta,
     rho = rho,

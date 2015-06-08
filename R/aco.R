@@ -9,8 +9,10 @@
 #'   See \code{\link[netgen]{makeNetwork}} for details.
 #' @param control [\code{AntsControl}]\cr
 #'   Control object. See \code{\link{makeAntsControl}}.
-#' @param show.info [\code{logical(1)}]\cr
-#'   Should logging messages be printed to the console? Default is \code{FALSE}.
+#' @param monitor [\code{AntsMonitor}]\cr
+#'   Monitor object of type \code{AntsMonitor}. Determines how to visualize the
+#'   optimization process. Default is not visualization. See \code{\link{makeConsoleMonitor}}
+#'   for basic console output.
 #' @return [\code{AntsResult}]
 #'   S3 result object.
 #' @keywords Optimization
@@ -27,12 +29,12 @@
 #'   x = matrix(c(1, 2, 1, 3, 1, 4, 3, 1, 3, 2, 3, 4), ncol = 2, byrow = TRUE)
 #'   x = makeNetwork(x, lower = 1, upper = 4)
 #'   ctrl = makeAntsControl(alpha = 1.2, beta = 1.8, n.ants = 20L, max.iter = 30L)
-#'   res = aco(x, ctrl, show.info = TRUE)
+#'   res = aco(x, ctrl, monitor = makeConsoleMonitor())
 #' @export
-aco = function(x, control, show.info = TRUE) {
+aco = function(x, control, monitor = makeNullMonitor()) {
   assertClass(x, "Network")
   assertClass(control, "AntsControl")
-  assertFlag(show.info)
+  assertClass(monitor, "AntsMonitor")
 
   # extract some instance information
   dist.mat = x$distance.matrix
@@ -68,6 +70,8 @@ aco = function(x, control, show.info = TRUE) {
   if (control$trace.all) {
     storage = list()
   }
+
+  monitor$before()
 
   repeat {
     iter.start.time = Sys.time()
@@ -110,17 +114,7 @@ aco = function(x, control, show.info = TRUE) {
       best.tour = best.current.tour
     }
 
-    if (show.info) {
-      catf("======")
-      catf("Current iteration: %i", i)
-      catf("Best ant: %i", best.current.ant)
-      catf("Best tour length: %f", best.current.tour.length)
-      catf("Best tour: %s", collapse(best.current.tour, sep = ", "))
-      catf("======")
-      catf("Overall best:")
-      catf("Best tour length: %f", best.tour.length)
-      catf("Best tour: %s", collapse(best.tour, sep = ", "))
-    }
+    monitor$step()
 
     #FIXME: this is ugly
     termination.code = getTerminationCode(
@@ -137,12 +131,12 @@ aco = function(x, control, show.info = TRUE) {
       break
     }
 
-    # update pheromone trails.
-    # This is where the different ACO systems differ most!
+    # update pheromone trails (this is where the different ACO systems differ most!)
     pher.mat = updatePheromoneMatrix(
       pher.mat, dist.mat,
       ants.tours, ants.tour.lengths,
-      control$rho, control$att.factor, control$min.pher.conc, control$max.pher.conc
+      best.tour, best.tour.length,
+      control
     )
 
     # store all the stuff in neccessary
@@ -156,6 +150,8 @@ aco = function(x, control, show.info = TRUE) {
 
     iter = iter + 1L
   }
+
+  monitor$after()
 
   makeS3Obj(
     call = match.call(),
@@ -258,6 +254,20 @@ hasAntUsedEdge = function(tour, start, end) {
   return(FALSE)
 }
 
+# Helper to get the IDs of the best ants, i.e., the ants which walked the shortest
+# tours.
+#
+# @param tour.length [numeric]\cr
+#   Vector of tour length.
+# @param n.elite [integer]
+#   Number of elite ants.
+# @return integer(n.elite)
+getEliteAnts = function(tour.length, n.elite) {
+  # order ants accoridng to the tour length in increasing order and select the # n.elite best
+  idx = order(tour.length, decreasing = FALSE)[seq(n.elite)]
+  return(idx)
+}
+
 # AS-like update of pheromone concentration of the edges, i. e., gentle evaporation
 # and increase according to number of visits and inverse distance of each edge.
 #
@@ -269,36 +279,51 @@ hasAntUsedEdge = function(tour, start, end) {
 #   Matrix containing the trails/tours of each ant row-wise.
 # @param tour.lengths [numeric]
 #   Vector of the ant tour length.
-# @param rho [numeric(1)]
-#   Evaporation rate.
-# @param att.factor [numeric(1)]
-#   Constant attractiveness factor.
+# @param global.best.tour [numeric]
+#   Global best tour, i.e., best tour so far.
+# @param global.best.tour.length [numeric(1)]
+#   Length of the global best tour.
+# @param control [AntsControl]
+#   Control object.
 # @return [matrix]
 #   Updated pheromone matrix.
-updatePheromoneMatrix = function(pher.mat, dist.mat, ants.tours, tour.lengths, rho, att.factor, min.pher.conc, max.pher.conc) {
-  getEliteAnts = function(ants.tours, tour.length, n.elite) {
-    # order ants accoridng to the tour length in increasing order and select the
-    # n.elite best
-    idx = order(tour.length, decreasing = FALSE)[seq(n.elite)]
-    return(idx)
-  }
-
+updatePheromoneMatrix = function(
+  pher.mat, dist.mat,
+  ants.tours, tour.lengths,
+  global.best.tour, global.best.tour.length,
+  control) {
   n = nrow(pher.mat)
   # first evaporate all edges
-  pher.mat = (1 - rho) * pher.mat
-  n.ants = length(tour.lengths)
-  elite.ants = getEliteAnts(ants.tours, tour.lengths, n.ants)
+  pher.mat = (1 - control$rho) * pher.mat
+  # determine the IDs of the "best" ants
+  elite.ants = getEliteAnts(tour.lengths, control$n.elite)
 
-  for (i in seq(n)) {
-    for (j in seq(n)) {
-      ants.pher.evap = sapply(elite.ants, function(k) {
-        if (hasAntUsedEdge(ants.tours[k, ], i, j)) att.factor / tour.lengths[k] else 0
-      })
+  ss = seq.int(n)
+
+  for (i in ss) {
+    for (j in ss) {
+      ants.pher.evap = 0
+      # get the "delta-tau" values for all the elite ants
+      if (control$n.elite > 0L) {
+        ants.pher.evap = sapply(elite.ants, function(k) {
+          if (hasAntUsedEdge(ants.tours[k, ], i, j)) control$att.factor / tour.lengths[k] else 0
+        })
+      }
       pher.mat[i, j] = pher.mat[i, j] + sum(ants.pher.evap)
-      if (pher.mat[i, j] < min.pher.conc) {
-        pher.mat[i, j] = min.pher.conc
-      } else if (pher.mat[i, j] > max.pher.conc) {
-        pher.mat[i, j] = max.pher.conc
+      # update the pheromone concentration of the arcs on the global best tour
+      if (control$use.global.best) {
+        global.best.pher.evap = 0
+        if (hasAntUsedEdge(global.best.tour, i, j)) {
+          global.best.pher.evap = control$att.factor / global.best.tour.length
+        }
+        pher.mat[i, j] = pher.mat[i, j] + global.best.pher.evap
+      }
+
+      # MAX-MIN Ant System, i.e., bound the pheromone concentration
+      if (pher.mat[i, j] < control$min.pher.conc) {
+        pher.mat[i, j] = control$min.pher.conc
+      } else if (pher.mat[i, j] > control$max.pher.conc) {
+        pher.mat[i, j] = control$max.pher.conc
       }
     }
   }

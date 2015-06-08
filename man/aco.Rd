@@ -6,7 +6,7 @@
 \href{http://en.wikipedia.org/wiki/Travelling_salesman_problem}{Travelling
 Salesperson Problem} (TSP).}
 \usage{
-aco(x, control, show.info = TRUE)
+aco(x, control, monitor = makeNullMonitor())
 }
 \arguments{
 \item{x}{[\code{Network}]\cr
@@ -16,8 +16,10 @@ See \code{\link[netgen]{makeNetwork}} for details.}
 \item{control}{[\code{AntsControl}]\cr
 Control object. See \code{\link{makeAntsControl}}.}
 
-\item{show.info}{[\code{logical(1)}]\cr
-Should logging messages be printed to the console? Default is \code{FALSE}.}
+\item{monitor}{[\code{AntsMonitor}]\cr
+Monitor object of type \code{AntsMonitor}. Determines how to visualize the
+optimization process. Default is not visualization. See \code{\link{makeConsoleMonitor}}
+for basic console output.}
 }
 \value{
 [\code{AntsResult}]
@@ -39,7 +41,7 @@ library(netgen)
   x = matrix(c(1, 2, 1, 3, 1, 4, 3, 1, 3, 2, 3, 4), ncol = 2, byrow = TRUE)
   x = makeNetwork(x, lower = 1, upper = 4)
   ctrl = makeAntsControl(alpha = 1.2, beta = 1.8, n.ants = 20L, max.iter = 30L)
-  res = aco(x, ctrl, show.info = TRUE)
+  res = aco(x, ctrl, monitor = makeConsoleMonitor())
 }
 \keyword{Optimization}
 

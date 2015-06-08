@@ -34,7 +34,7 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
     for (alpha in alphas) {
       for (beta in betas) {
         ctrl = makeAntsControl(max.iter = max.iter, alpha = alpha, beta = beta, n.ants = n.ant)
-        res = aco(instance, ctrl, show.info = FALSE)
+        res = aco(instance, ctrl)
         err.msg = sprintf("Failed for alpha = %f, beta = %f, n.ants = %f", alpha, beta, n)
         expect_equal(length(res$best.tour), n, info = err.msg)
         expect_equal(res$best.tour.length, opt.tour.length, info = err.msg)
