@@ -3,46 +3,18 @@
 #' This function generates a control object, i.e., internally a simple list, of
 #' parameters and does sanity checks.
 #'
-#' @param n.ants [\code{integer(1)}]\cr
-#'   Number of ants. Positive integer.
-#' @param n.elite [\code{integer(1)}]\cr
-#'   Number of \dQuote{elite} ants. Only the \code{n.elite} best ants are allowed to deposit
-#'   pheromones during the update phase. Must me lower than or equal to \code{n.ants}.
-#'   Default is \code{n.elite = n.ants}.
-#' @param use.global.best [\code{logical(1)}]\cr
-#'   Should the global best tour be used to update the pheromones? Default is \code{FALSE}.
-#'   Keep in mind: if \code{use.global.best} is \code{TRUE} and \code{n.elite} is
-#'   0, only the global best tour (and consequently only the arcs of the global best
-#'   tour) gain pheromones in each iteration.
-#' @param alpha [\code{numeric(1)}]\cr
-#'   This parameter decides how much influence the pheromones on an edge have
-#'   on the selection of edges. Default is \code{1}.
-#' @param beta [\code{numeric(1)}]\cr
-#'   This parameter decided how much influence the edge distances have
-#'   on the selection of edges. Default is \code{2}.
-#' @param rho [\code{numeric(1)}]\cr
-#'   \dQuote{Pheromone evaporation coefficient} respectively \dQuote{evaporation rate}.
-#'   In each iteration the pheromones on edge (i,j) are first decreased by (1 - rho)
-#'   before ants deposit their pheromones on it. Must be in (0, 1). Default is \code{0.1}.
-#' @param att.factor [\code{numeric(1)}]\cr
-#'   This is the socalled \dQuote{constant attractiveness factor}. Default is \code{1}.
-#' @param init.pher.conc [\code{numeric(1)}]\cr
-#'   Initial pheromone concentration for every single edge. Default is \code{0.0001}.
-#' @param min.pher.conc [\code{numeric(1)}]\cr
-#'   Minimal pheromone concentration for every single edge. Default is \code{0}.
-#' @param max.pher.conc [\code{numeric(1)}]\cr
-#'   Maximal pheromone concentration for every single edge. Default is \code{10e5}.
-#' @param pher.conc.in.bounds [\code{logical(1)}]\cr
-#'   Should the pheromone concentration be bounded by \code{min.pher.conc} and \code{max.pher.conc}?
-#'   Default is \code{TRUE}.
-#' @param prp.prob [\code{numeric(1)}]\cr
-#'   Probability used in the pseudo-random-proportional action choice rule used, e.g., by
-#'   the Ant Colony System. Default is 0, which means that the rule is not applied
-#'   at all and the tour construction is done in the classical way.
-#' @param local.pher.update.fun [\code{function}]\cr
-#'   Local (pheromone) update rule applied right after an ant crossed an edge. Default
-#'   is \code{NULL}, which means no local update at all. This must be a function which
-#'   expects a single parameter \code{pher}.
+#' @template arg_nants
+#' @template arg_nelite
+#' @template arg_useglobalbest
+#' @template arg_alpha
+#' @template arg_beta
+#' @template arg_rho
+#' @template arg_attfactor
+#' @template arg_initpherconc
+#' @template arg_minpherconc
+#' @template arg_maxpherconc
+#' @template arg_prpprob
+#' @template arg_localpherupdatefun
 #' @param max.iter [\code{integer(1)}]\cr
 #'   Maximal number of iterations. Default is \code{10}.
 #' @param max.time [\code{integer(1)}]\cr
@@ -73,7 +45,6 @@ makeAntsControl = function(
   use.global.best = FALSE,
   alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
-  pher.conc.in.bounds = TRUE,
   prp.prob = 0,
   local.pher.update.fun = NULL,
   max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
@@ -97,7 +68,6 @@ makeAntsControl = function(
   assertNumber(init.pher.conc, lower = 0.0001, finite = TRUE, na.ok = FALSE)
   assertNumber(min.pher.conc, lower = 0, finite = TRUE, na.ok = FALSE)
   assertNumber(max.pher.conc, lower = 1, finite = TRUE, na.ok = FALSE)
-  assertFlag(pher.conc.in.bounds)
   assertNumber(prp.prob, lower = 0, upper = 1, na.ok = FALSE)
 
   if (!is.null(local.pher.update.fun)) {
@@ -129,7 +99,6 @@ makeAntsControl = function(
     init.pher.conc = init.pher.conc,
     min.pher.conc = min.pher.conc,
     max.pher.conc = max.pher.conc,
-    pher.conc.in.bounds = pher.conc.in.bounds,
     prp.prob = prp.prob,
     local.pher.update.fun = local.pher.update.fun,
     max.iter = max.iter,

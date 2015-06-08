@@ -7,9 +7,9 @@
 makeAntsControl(n.ants = 2L, n.elite = n.ants, use.global.best = FALSE,
   alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 1e-04, min.pher.conc = 0, max.pher.conc = 1e+06,
-  pher.conc.in.bounds = TRUE, prp.prob = 0, local.pher.update.fun = NULL,
-  max.iter = 10L, max.time = Inf, global.opt.value = NULL,
-  termination.eps = 0.1, trace.all = FALSE)
+  prp.prob = 0, local.pher.update.fun = NULL, max.iter = 10L,
+  max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
+  trace.all = FALSE)
 }
 \arguments{
 \item{n.ants}{[\code{integer(1)}]\cr
@@ -50,10 +50,6 @@ Minimal pheromone concentration for every single edge. Default is \code{0}.}
 
 \item{max.pher.conc}{[\code{numeric(1)}]\cr
 Maximal pheromone concentration for every single edge. Default is \code{10e5}.}
-
-\item{pher.conc.in.bounds}{[\code{logical(1)}]\cr
-Should the pheromone concentration be bounded by \code{min.pher.conc} and \code{max.pher.conc}?
-Default is \code{TRUE}.}
 
 \item{prp.prob}{[\code{numeric(1)}]\cr
 Probability used in the pseudo-random-proportional action choice rule used, e.g., by
