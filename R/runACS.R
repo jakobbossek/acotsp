@@ -1,6 +1,6 @@
-#' Wrapper function for the classical Ant System.
+#' Wrapper function for the Ant Colony System.
 #'
-#' Offers a more R-like interface to the basic Ant System (AS) for the TSP.
+#' Offers a more R-like interface to the Ant Colony System (ACS) for the TSP.
 #'
 #' @template arg_network
 #' @template arg_nants
@@ -16,10 +16,14 @@
 #'   S3 result object.
 #' @export
 #FIXME: add @rdname or family or something like that for all these shortcut funs.
-runAS = function(
+runACS = function(
   x, n.ants = 10L, alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   monitor = makeNullMonitor(), ...) {
-  control = makeAntsControl(n.ants = n.ants, alpha = alpha, beta = beta,
+  control = makeAntsControl(
+    n.ants = n.ants,
+    n.elite = 0L, # only the global best tour/ant is allowed to place pheromones
+    use.global.best = TRUE,
+    alpha = alpha, beta = beta,
     rho = rho, att.factor = att.factor, ...)
   aco(x, control, monitor)
 }
