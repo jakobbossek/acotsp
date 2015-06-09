@@ -55,6 +55,7 @@ aco = function(x, control, monitor = makeNullMonitor()) {
   # Each row of the matrix contains a permutation of {1,...,n}, i. e., a
   # valid tour.
   pher.mat = matrix(control$init.pher.conc, ncol = n, nrow = n)
+  diag(pher.mat) = 0
   ants.tours = matrix(NA, ncol = n, nrow = control$n.ants)
 
   # init termination criteria values
@@ -313,6 +314,9 @@ updatePheromoneMatrix = function(
 
     for (i in ss) {
       for (j in ss) {
+        if (i == j) {
+          next # diagonal elements are always zero
+        }
         ants.pher.evap = 0
         # get the "delta-tau" values for all the elite ants
         if (control$n.elite > 0L) {
