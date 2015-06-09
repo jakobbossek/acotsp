@@ -5,7 +5,8 @@
 \title{Wrapper function for the Ant Colony System.}
 \usage{
 runACS(x, n.ants = 10L, alpha = 1, beta = 2, rho = 0.1,
-  att.factor = 1, monitor = makeNullMonitor(), ...)
+  att.factor = 1, local.pher.update.fun = NULL,
+  monitor = makeNullMonitor(), ...)
 }
 \arguments{
 \item{x}{[\code{Network}]\cr
@@ -30,6 +31,11 @@ before ants deposit their pheromones on it. Must be in (0, 1). Default is \code{
 
 \item{att.factor}{[\code{numeric(1)}]\cr
 This is the socalled \dQuote{constant attractiveness factor}. Default is \code{1}.}
+
+\item{local.pher.update.fun}{[\code{function}]\cr
+Local (pheromone) update rule applied right after an ant crossed an edge. Default
+is \code{NULL}, which means no local update at all. This must be a function which
+expects a single parameter \code{pher}.}
 
 \item{monitor}{[\code{AntsMonitor}]\cr
 Monitor object of type \code{AntsMonitor}. Determines how to visualize the
