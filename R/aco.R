@@ -288,37 +288,55 @@ updatePheromoneMatrix = function(
   global.best.tour, global.best.tour.length,
   control) {
   n = nrow(pher.mat)
-  # first evaporate all edges
-  pher.mat = (1 - control$rho) * pher.mat
-  # determine the IDs of the "best" ants
-  elite.ants = getEliteAnts(tour.lengths, control$n.elite)
 
   ss = seq.int(n)
 
-  for (i in ss) {
-    for (j in ss) {
-      ants.pher.evap = 0
-      # get the "delta-tau" values for all the elite ants
-      if (control$n.elite > 0L) {
-        ants.pher.evap = sapply(elite.ants, function(k) {
-          if (hasAntUsedEdge(ants.tours[k, ], i, j)) control$att.factor / tour.lengths[k] else 0
-        })
-      }
-      pher.mat[i, j] = pher.mat[i, j] + sum(ants.pher.evap)
-      # update the pheromone concentration of the arcs on the global best tour
-      if (control$use.global.best) {
-        global.best.pher.evap = 0
-        if (hasAntUsedEdge(global.best.tour, i, j)) {
-          global.best.pher.evap = control$att.factor / global.best.tour.length
-        }
-        pher.mat[i, j] = pher.mat[i, j] + global.best.pher.evap
-      }
+  if (control$use.global.best && control$best.deposit.only) {
+    # ACS-LIKE UPDATE OF PHEROMONES - O(n)
+    # i.e., only the arcs of the global best tour are affected by deposit and
+    # evaporation of pheromone. Thus we have O(n) complexity here instead of O(n^2).
+    tt = c(global.best.tour, global.best.tour[1])
+    for (i in 1:(length(tt) - 1L)) {
+      start = tt[i]
+      end = tt[i + 1L]
+      pher.mat[start, end] = (1 - control$rho) * pher.mat[start, end] + control$rho / global.best.tour.length
+    }
+  } else {
+    # CLASSICAL UPDATE OF PHEROMONES - O(n^2)
+    # i.e., many of the ants drop pheromones
 
-      # MAX-MIN Ant System, i.e., bound the pheromone concentration
-      if (pher.mat[i, j] < control$min.pher.conc) {
-        pher.mat[i, j] = control$min.pher.conc
-      } else if (pher.mat[i, j] > control$max.pher.conc) {
-        pher.mat[i, j] = control$max.pher.conc
+    # determine the IDs of the "best" ants
+    elite.ants = getEliteAnts(tour.lengths, control$n.elite)
+
+    # first evaporate all edges ...
+    pher.mat = (1 - control$rho) * pher.mat
+
+    for (i in ss) {
+      for (j in ss) {
+        ants.pher.evap = 0
+        # get the "delta-tau" values for all the elite ants
+        if (control$n.elite > 0L) {
+          ants.pher.evap = sapply(elite.ants, function(k) {
+            if (hasAntUsedEdge(ants.tours[k, ], i, j)) control$att.factor / tour.lengths[k] else 0
+          })
+        }
+        # update pheromones
+        pher.mat[i, j] = pher.mat[i, j] + sum(ants.pher.evap)
+        # update the pheromone concentration of the arcs on the global best tour
+        if (control$use.global.best) {
+          global.best.pher.evap = 0
+          if (hasAntUsedEdge(global.best.tour, i, j)) {
+            global.best.pher.evap = control$att.factor / global.best.tour.length
+          }
+          pher.mat[i, j] = pher.mat[i, j] + global.best.pher.evap
+        }
+
+        # MAX-MIN Ant System, i.e., bound the pheromone concentration
+        if (pher.mat[i, j] < control$min.pher.conc) {
+          pher.mat[i, j] = control$min.pher.conc
+        } else if (pher.mat[i, j] > control$max.pher.conc) {
+          pher.mat[i, j] = control$max.pher.conc
+        }
       }
     }
   }

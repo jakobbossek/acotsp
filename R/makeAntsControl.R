@@ -6,6 +6,7 @@
 #' @template arg_nants
 #' @template arg_nelite
 #' @template arg_useglobalbest
+#' @template arg_bestdepositonly
 #' @template arg_alpha
 #' @template arg_beta
 #' @template arg_rho
@@ -43,6 +44,7 @@ makeAntsControl = function(
   n.ants = 2L,
   n.elite = n.ants,
   use.global.best = FALSE,
+  best.deposit.only = FALSE,
   alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
   prp.prob = 0,
@@ -57,6 +59,7 @@ makeAntsControl = function(
     stopf("n.elite must be lower or equal to n.ants, but %i = n.elite > n.ants = %i", n.elite, n.ants)
   }
   assertFlag(use.global.best)
+  assertFlag(best.deposit.only)
   if (n.elite == 0 && !use.global.best) {
     stopf("Zero elite ants and no global update not allowed! Somehow the pheromones need
       to be updated.")
@@ -92,6 +95,7 @@ makeAntsControl = function(
     n.ants = n.ants,
     n.elite = n.elite,
     use.global.best = use.global.best,
+    best.deposit.only = best.deposit.only,
     alpha = alpha,
     beta = beta,
     rho = rho,

@@ -5,11 +5,11 @@
 \title{Generates a control object for the \code{\link{aco}} function.}
 \usage{
 makeAntsControl(n.ants = 2L, n.elite = n.ants, use.global.best = FALSE,
-  alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
-  init.pher.conc = 1e-04, min.pher.conc = 0, max.pher.conc = 1e+06,
-  prp.prob = 0, local.pher.update.fun = NULL, max.iter = 10L,
-  max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
-  trace.all = FALSE)
+  best.deposit.only = FALSE, alpha = 1, beta = 2, rho = 0.1,
+  att.factor = 1, init.pher.conc = 1e-04, min.pher.conc = 0,
+  max.pher.conc = 1e+06, prp.prob = 0, local.pher.update.fun = NULL,
+  max.iter = 10L, max.time = Inf, global.opt.value = NULL,
+  termination.eps = 0.1, trace.all = FALSE)
 }
 \arguments{
 \item{n.ants}{[\code{integer(1)}]\cr
@@ -25,6 +25,11 @@ Should the global best tour be used to update the pheromones? Default is \code{F
 Keep in mind: if \code{use.global.best} is \code{TRUE} and \code{n.elite} is
 0, only the global best tour (and consequently only the arcs of the global best
 tour) gain pheromones in each iteration.}
+
+\item{best.deposit.only}{[\code{logical(1)}]\cr
+Should only the arcs of the global \dQuote{best-so-far} tour be affected by
+pheromone evaporation and deposit? Default is \code{FALSE}. This parameter
+has an effect if and only if \code{use.global.best} is \code{TRUE}.}
 
 \item{alpha}{[\code{numeric(1)}]\cr
 This parameter decides how much influence the pheromones on an edge have
