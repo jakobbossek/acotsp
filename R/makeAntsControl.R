@@ -131,3 +131,36 @@ makeAntsControl = function(
     classes = "AntsControl"
   )
 }
+
+#' @export
+print.AntsControl = function(x, ...) {
+  catf("Ants Control object")
+
+  catf("\nBASE PARAMETERS")
+  if (x$n.elite > 0) {
+    catf("Number of ants: %i with %i elite ants (%.2f%%)",
+      x$n.ants, x$n.elite, 100 * as.numeric(x$n.elite) / as.numeric(x$n.ants))
+  } else {
+    catf("Number of ants:        %i", c$n.ants)
+  }
+  catf("Alpha:              %.3f", x$alpha)
+  catf("Beta:               %.3f", x$beta)
+  catf("Rho:                %.3f (evaporation rate)", x$rho)
+  catf("Attraction factor:  %.3f", x$att.factor)
+  catf("Minimal pheromones: %.3f", x$min.pher.conc)
+  catf("Maximal pheromones: %.3f", x$max.pher.conc)
+  catf("Initial pheromones: %.3f", x$init.pher.conc)
+
+  catf("\nLOCAL SEARCH")
+  if (!is.null(x$local.search.fun)) {
+    catf("Local search procedure applied to ant trials %s",
+      if (length(x$local.search.step) > 1L) {
+        sprintf("in iterations %s.", collapse(x$local.search.step))
+      } else {
+        sprintf("every %i iterations.", x$local.search.step)
+      }
+    )
+  } else {
+    catf("No local search procedure applied.")
+  }
+}
