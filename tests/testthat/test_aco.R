@@ -13,6 +13,7 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
     expect_equal(length(res$best.tour), n, info = err.msg)
     expect_equal(res$best.tour.length, opt.tour.length, info = err.msg)
     expect_equal(res$termination.code, 0, info = err.msg)
+    expect_output(print(res), "Ants found solution")
   }
 
   # setup(s) for the ant algorithm
@@ -48,4 +49,15 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
   ctrl = makeAntsControl(max.iter = 10L, n.ants = 10L, use.global.best = TRUE, best.deposit.only = TRUE)
   res = aco(instance, ctrl)
   expect_found_optimum(res, err.msg = sprintf("Failed to find optimum with only global best deposit (ACS)."))
+
+  # CHECK IF CONTROL OBJECT COMPUTATION FAILS
+
+  # at least one ant must participate in pheromone update
+  expect_error(makeAntsControl(n.elite = 0L, use.global.best = FALSE))
+
+  # n.elite needs to be at most n.ants
+  expect_error(makeAntsControl(n.ants = 10L, n.elite = 11L))
+
+  # local search function given, but not called anytime
+  expect_warning(makeAntsControl(local.search.fun = function(x, initial.tour) initial.tour))
 })
