@@ -1,18 +1,6 @@
 context("ants at work")
 
 test_that("Ant System finds optimum of simple rectangluar instance", {
-  # FIXME: move this to netgen (as well as makeGridNetwork)
-  buildRectangleInstance = function(lower, upper) {
-    x = as.matrix(expand.grid(lower:upper, lower:upper))
-    coordinates = lapply(1:nrow(x), function(i) {
-      if ((x[i, 1] %in% c(lower, upper)) || (x[i, 2] %in% c(lower, upper)))
-        return(x[i, ])
-      return(c())
-    })
-    coordinates = do.call(rbind, coordinates)
-    netgen::makeNetwork(coordinates, lower = lower, upper = upper)
-  }
-
   # we have 8 cities/nodes with this setting, i.e., possibly (8-1)!/2 = 2520 tours
   # and there is only one optimal tour with length 8
   lower = 1L
