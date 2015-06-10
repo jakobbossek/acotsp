@@ -9,6 +9,11 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
   instance = buildRectangleInstance(lower, upper)
   n = getNumberOfNodes(instance)
 
+  expect_found_optimum = function(result, err.msg) {
+    expect_equal(length(res$best.tour), n, info = err.msg)
+    expect_equal(res$best.tour.length, opt.tour.length, info = err.msg)
+    expect_equal(res$termination.code, 0, info = err.msg)
+  }
 
   # setup(s) for the ant algorithm
   max.iter = 25L
@@ -18,16 +23,29 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
 
   set.seed(2)
 
+  # test different values of the default ACO parameters
   for (n.ant in n.ants) {
     for (alpha in alphas) {
       for (beta in betas) {
         ctrl = makeAntsControl(max.iter = max.iter, alpha = alpha, beta = beta, n.ants = n.ant)
         res = aco(instance, ctrl)
         err.msg = sprintf("Failed for alpha = %f, beta = %f, n.ants = %f", alpha, beta, n)
-        expect_equal(length(res$best.tour), n, info = err.msg)
-        expect_equal(res$best.tour.length, opt.tour.length, info = err.msg)
-        expect_equal(res$termination.code, 0, info = err.msg)
+        expect_found_optimum(res, err.msg)
       }
     }
   }
+
+  # test different n.elite values
+  ns.elite = c(3L, 7L)
+  for (n.elite in ns.elite) {
+    ctrl = makeAntsControl(max.iter = 10L, n.ants = 10L, n.elite = n.elite)
+    res = aco(instance, ctrl)
+    err.msg = sprintf("Failed to find optimum for n.elite = %i.", n.elite)
+    expect_found_optimum(res, err.msg)
+  }
+
+  # test that using only the global best tour works
+  ctrl = makeAntsControl(max.iter = 10L, n.ants = 10L, use.global.best = TRUE, best.deposit.only = TRUE)
+  res = aco(instance, ctrl)
+  expect_found_optimum(res, err.msg = sprintf("Failed to find optimum with only global best deposit (ACS)."))
 })
