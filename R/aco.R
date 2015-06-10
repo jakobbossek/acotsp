@@ -164,6 +164,7 @@ aco = function(x, control, monitor = makeNullMonitor()) {
     storage = storage,
     termination.code = termination.code,
     termination.message = getTerminationMessage(termination.code),
+    control = control,
     classes = "AntsResult"
   )
 }
