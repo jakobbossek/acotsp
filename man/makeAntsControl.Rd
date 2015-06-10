@@ -7,9 +7,10 @@
 makeAntsControl(n.ants = 2L, n.elite = n.ants, use.global.best = FALSE,
   best.deposit.only = FALSE, alpha = 1, beta = 2, rho = 0.1,
   att.factor = 1, init.pher.conc = 1e-04, min.pher.conc = 0,
-  max.pher.conc = 1e+06, prp.prob = 0, local.pher.update.fun = NULL,
-  max.iter = 10L, max.time = Inf, global.opt.value = NULL,
-  termination.eps = 0.1, trace.all = FALSE)
+  max.pher.conc = 1e+06, local.search.fun = NULL,
+  local.search.step = integer(), prp.prob = 0,
+  local.pher.update.fun = NULL, max.iter = 10L, max.time = Inf,
+  global.opt.value = NULL, termination.eps = 0.1, trace.all = FALSE)
 }
 \arguments{
 \item{n.ants}{[\code{integer(1)}]\cr
@@ -55,6 +56,20 @@ Minimal pheromone concentration for every single edge. Default is \code{0}.}
 
 \item{max.pher.conc}{[\code{numeric(1)}]\cr
 Maximal pheromone concentration for every single edge. Default is \code{10e5}.}
+
+\item{local.search.fun}{[\code{function}]\cr
+Local search procedure which should be applied to all ant tours every
+\code{local.search.step} iterations. The function must expect the TSP
+instance \code{x} as the first, the initial tour \code{initial.tour} as
+the second argument. Default is \code{NULL}, i.e., no local search at all.}
+
+\item{local.search.step}{[\code{integer}]\cr
+This parameter determines when to apply the local search procedure given by
+the \code{local.search.fun} function. If this is a single scalar value n, the
+local search is applied every n iterations. If a integer vector is passed,
+the local search procedure is called on exactly the given iterations. This
+parameter is considered only if \code{local.search.step} is not \code{NULL}.
+Default is the empty vector, which means no local search at all.}
 
 \item{prp.prob}{[\code{numeric(1)}]\cr
 Probability used in the pseudo-random-proportional action choice rule used, e.g., by

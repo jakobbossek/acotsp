@@ -14,6 +14,8 @@
 #' @template arg_initpherconc
 #' @template arg_minpherconc
 #' @template arg_maxpherconc
+#' @template arg_localsearchfun
+#' @template arg_localsearchstep
 #' @template arg_prpprob
 #' @template arg_localpherupdatefun
 #' @param max.iter [\code{integer(1)}]\cr
@@ -47,6 +49,7 @@ makeAntsControl = function(
   best.deposit.only = FALSE,
   alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   init.pher.conc = 0.0001, min.pher.conc = 0, max.pher.conc = 10e5,
+  local.search.fun = NULL, local.search.step = integer(),
   prp.prob = 0,
   local.pher.update.fun = NULL,
   max.iter = 10L, max.time = Inf, global.opt.value = NULL, termination.eps = 0.1,
@@ -77,6 +80,19 @@ makeAntsControl = function(
     assertFunction(local.pher.update.fun, args = "pher")
   }
 
+  # check local search (LS) parameters
+  if (!is.null(local.search.fun)) {
+    assertFunction(local.search.fun, args = c("x", "initial.tour"))
+  }
+  assertInteger(local.search.step, min.len = 0L, any.missing = FALSE,
+    all.missing = TRUE, unique = TRUE)
+
+  #FIXME: do we want warnings?
+  if (!is.null(local.search.fun) && length(local.search.step) == 0L) {
+    warningf("The given local search procedure will not be applied at any iterations.
+      Consider to set the local.search.step parameter in an appropriate way.")
+  }
+
   if (is.finite(max.time)) {
     max.time = convertInteger(max.time)
   }
@@ -103,6 +119,8 @@ makeAntsControl = function(
     init.pher.conc = init.pher.conc,
     min.pher.conc = min.pher.conc,
     max.pher.conc = max.pher.conc,
+    local.search.fun = local.search.fun,
+    local.search.step = local.search.step,
     prp.prob = prp.prob,
     local.pher.update.fun = local.pher.update.fun,
     max.iter = max.iter,

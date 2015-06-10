@@ -95,6 +95,8 @@ aco = function(x, control, monitor = makeNullMonitor()) {
       }
     }
 
+    ants.tours = applyLocalSearch(x, ants.tours, iter, control)
+
     # get tour length (row-wise)
     ants.tour.lengths = apply(ants.tours, 1L, getTourLength, dist.mat = dist.mat)
 
@@ -162,6 +164,31 @@ aco = function(x, control, monitor = makeNullMonitor()) {
     termination.message = getTerminationMessage(termination.code),
     classes = "AntsResult"
   )
+}
+
+# Apply local search to current ant trails.
+#
+# @param x [\code{Network}]
+#   Network.
+# @param ants.tours [matrix]
+#   Matrix containing the trails/tours of each ant row-wise.
+# @param iter [integer(1)]
+#   Current iteration.
+# @param control [AntsControl]
+#   Control object.
+# @return [matrix] Modified ants.tours matrix.
+applyLocalSearch = function(x, ants.tours, iter, control) {
+  # eventually apply local search in the current iteration
+  if (!is.null(control$local.search.fun) && (iter %in% control$local.search.step)) {
+    messagef("Applying local search to ant trails.")
+    #FIXME: can we somehow avoid the transponation?
+    mod.tours = t(apply(ants.tours, 1L, function(tour) {
+      control$local.search.fun(x, initial.tour = tour)
+    }))
+    return(mod.tours)
+  }
+  # if LS should not be applied fallback and return unmodified tours
+  return(ants.tours)
 }
 
 # Get the next edge during trail construction.
