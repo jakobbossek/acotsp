@@ -212,7 +212,7 @@ getNextEdgeOnTrail = function(start, used, alpha, beta, dist.mat, pher.mat, prp.
   # get the IDs of the nodes, which are not yet included in the tour
   unused.idx = which(!used)
   # Here we apply the socalled "pseudo-random-proportional action choice rule"
-  # (See Stützle and Dorigo - ACO Algorithms for the Travelling Salesman Problem)
+  # (See Stuetzle and Dorigo - ACO Algorithms for the Travelling Salesman Problem)
   if (runif(1) <= prp.prob) {
     # get the unvisited city which is most promising according to pheromone
     # concentration and distance

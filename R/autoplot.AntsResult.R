@@ -22,32 +22,3 @@ autoplot.AntsResult = function(object, step.size = 1L, ...) {
     pause()
   }
 }
-
-
-pasteNamedList = function(l) {
-  paste(mixupStrings(names(l), as.character(unlist(l))), sep = ",")
-}
-
-listToString = function(l) {
-  ns = names(l)
-  res = lapply(1:length(l), function(i) {
-    paste(ns[i], i, sep = "=")
-  })
-  collapse(unlist(res), ", ")
-}
-
-#FIMXE: name it "Reißverschluss" in englisch
-mixupStrings = function(s, t) {
-  assertCharacter(s, any.missing = FALSE, min.len = 1L)
-  assertCharacter(t, any.missing = FALSE, min.len = 1L)
-
-  n = length(s)
-  if (n != length(t)) {
-    stopf("Only strings of equal size can be combined!")
-  }
-
-  res = character(2 * n)
-  res[seq(1, 2 * n, by = 2)] = s
-  res[seq(2, 2 * n, by = 2)] = t
-  return(res)
-}
