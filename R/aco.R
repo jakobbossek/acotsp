@@ -65,6 +65,8 @@ aco = function(x, control, monitor = makeNullMonitor()) {
   storage = NULL
   if (control$trace.all) {
     storage = list()
+    # store the stuff after 0 iterations (note that we store that on index 1!)
+    storage[[1L]] = list(pher.mat = pher.mat, ants.tours = NA, best.tour = NA)
   }
 
   monitor$before()
@@ -114,6 +116,23 @@ aco = function(x, control, monitor = makeNullMonitor()) {
 
     monitor$step()
 
+    # update pheromone trails (this is where the different ACO systems differ most!)
+    pher.mat = updatePheromoneMatrix(
+      pher.mat, dist.mat,
+      ants.tours, ants.tour.lengths,
+      best.tour, best.tour.length,
+      control
+    )
+
+    # store all the stuff in neccessary
+    if (control$trace.all) {
+      storage[[iter + 1L]] = list(
+        pher.mat = pher.mat,
+        ants.tours = ants.tours,
+        best.tour = best.tour
+      )
+    }
+
     #FIXME: this is ugly
     termination.code = getTerminationCode(
       current.iter = iter,
@@ -127,23 +146,6 @@ aco = function(x, control, monitor = makeNullMonitor()) {
 
     if (termination.code > -1L) {
       break
-    }
-
-    # update pheromone trails (this is where the different ACO systems differ most!)
-    pher.mat = updatePheromoneMatrix(
-      pher.mat, dist.mat,
-      ants.tours, ants.tour.lengths,
-      best.tour, best.tour.length,
-      control
-    )
-
-    # store all the stuff in neccessary
-    if (control$trace.all) {
-      storage[[iter]] = list(
-        pher.mat = pher.mat,
-        ants.tours = ants.tours,
-        best.tour = best.tour
-      )
     }
 
     iter = iter + 1L

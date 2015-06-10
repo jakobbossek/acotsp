@@ -61,7 +61,7 @@ getTerminationMessage = function(termination.code) {
 #   Maximum number of iterations.
 # @return [logical(1)]
 didReachMaximumIterations = function(current.iter, max.iter) {
-  return(current.iter > max.iter)
+  return(current.iter >= max.iter)
 }
 
 # Reached tolerance level?
