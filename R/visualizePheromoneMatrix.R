@@ -13,19 +13,21 @@ visualizePheromoneMatrix = function(pher.mat, ...) {
   assertMatrix(pher.mat)
   n = ncol(pher.mat)
   if (nrow(pher.mat) != n) {
-    stopf("BAAAAM! A pheromone matrix needs to be a square n x n matrix,
+    stopf("A pheromone matrix needs to be a square n x n matrix,
       dim(pher.mat) = (%i, %i)", nrow(pher.mat), n
     )
   }
 
   if (!all(pher.mat >= 0)) {
-    stopf("BAAAM! Pheromone concentration must not be negative, but %i component(s)
+    stopf("Pheromone concentration must not be negative, but %i component(s)
       of the passed matrix are.", sum(pher.mat < 0))
   }
 
+  # convert to ggplot-friendly format
   df = pheromoneMatrixToGGDataframe(pher.mat)
-  pl = ggplot(data = df, mapping = aes_string(x = "x1", y = "x2", fill = "Pheromones"))
+  requirePackages("ggplot2", why = "ants::visualizePheromoneMatrix")
 
+  pl = ggplot(data = df, mapping = aes_string(x = "x1", y = "x2", fill = "Pheromones"))
   pl = pl + geom_tile(colour = "white")
   pl = pl + scale_fill_gradient(low = "white", high = "steelblue")
   pl = pl + scale_x_discrete(expand = c(0, 0))
@@ -36,6 +38,12 @@ visualizePheromoneMatrix = function(pher.mat, ...) {
   return(pl)
 }
 
+# Helper function which converts square pheromone matrix into a data frame
+# that can be handled by ggplot.
+#
+# @param x [matrix]
+#   Pheromone matrix.
+# @return [data.frame]
 pheromoneMatrixToGGDataframe = function(x) {
   n = ncol(x)
   colnames(x) = rownames(x) = paste0("N", seq(n))
