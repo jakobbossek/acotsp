@@ -11,7 +11,7 @@
 Result object of a run of the \code{\link{aco}} function.}
 
 \item{close}{[\code{logical(1)}]\cr
-Close the tour, i. e., append the last city to the end?}
+Close the tour, i. e., append the last city to the end? Default is \code{FALSE}.}
 
 \item{...}{[any]\cr
 Currenly not used.}
