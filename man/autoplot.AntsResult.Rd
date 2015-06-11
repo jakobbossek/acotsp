@@ -24,6 +24,7 @@ Plots optimization progress.
 }
 \note{
 This function requires the storage of the entire optimization trace,
-  i. e., set the parameter \code{trace.all} of \code{aco} to \code{TRUE}.
+  i. e., set the parameter \code{trace.all} of \code{makeAntsControl} to
+  \code{TRUE}.
 }
 
