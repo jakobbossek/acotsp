@@ -7,11 +7,16 @@
 #' @param ... [any]\cr
 #'   Currently not used.
 #' @note This function requires the storage of the entire optimization trace,
-#'   i. e., set the parameter \code{trace.all} of \code{aco} to \code{TRUE}.
+#'   i. e., set the parameter \code{trace.all} of \code{makeAntsControl} to
+#'   \code{TRUE}.
 #' @return Nothing.
 autoplot.AntsResult = function(object, step.size = 1L, ...) {
   assertInteger(step.size, len = 1L, lower = 1L, upper = object$iters.done)
   storage = object$storage
+  if (is.null(storage)) {
+    stopf("Result can not be plotted! Storage is empty. You need to set the trace.all
+      parameter in the control object.")
+  }
   network = object$network
   reached.iter = object$iters.done
   iter = 1L
