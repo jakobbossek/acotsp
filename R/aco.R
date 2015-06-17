@@ -1,16 +1,44 @@
-#' Ant System Optimization (ACO) algorithm for the (a)symmetric
+#' @title Ant System Optimization (ACO) algorithm for the symmetric
 #' \href{http://en.wikipedia.org/wiki/Travelling_salesman_problem}{Travelling
 #' Salesperson Problem} (TSP).
 #'
-#' Implementation of the classical Ant System (AS) introduced by Dorigo.
+#' @description
+#' This is the main function of the package and the entry point for Ant Colony
+#' based optiomization of the TSP. The function expects a graph, an optional
+#' monitoring function (see e.g. \code{\link{makeMonitor}}) and a control object
+#' (see \code{\link{makeAntsControl}}). The latter contains all the settings
+#' of the different parameters. The vast number of parameter combinations allows
+#' for many different ant strategies.
 #'
-#' @template arg_network
-#' @param control [\code{AntsControl}]\cr
-#'   Control object. See \code{\link{makeAntsControl}}.
-#' @template arg_monitor
-#' @return [\code{AntsResult}]
-#'   S3 result object.
+#' Specific shortcut functions exist for the most important ACO-based solvers
+#' for the TSP. See e.g. \code{\link{runAS}} for the classical Ant System approach
+#' by Dorigo, \code{\link{runACS}} for the Ant-Colony-System or \code{\link{runMMAS}}
+#' for the MAXMIN-Ant-System.
+#'
 #' @keywords Optimization
+#'
+#' @seealso For shortcuts of important ACO-based solvers see e.g. \code{\link{runAS}},
+#' \code{\link{runACS}} and \code{\link{runMMAS}}.
+#'
+#' @references
+#' Dorigo, M. and Maniezzo, V. and Colorni, A. (1996)
+#' \emph{Ant System: Optimization by a Colony of Cooperating Agents.}
+#' In IEEE Transactions on Systems, Man, and Cybernetics - Part B.
+#' IEEE Press, Piscataway, NJ, USA.
+#'
+#' Dorigo, M. and Stuetzle, T. (2004)
+#' \emph{Ant Colony Optimization.}
+#' Bradford Company, Scituate, MA, USA.
+#'
+#' Stuetzle, T. and Hoos, H.H. (1998)
+#' \emph{Improvements on the Ant System: Introducing the MAX-MIN Ant System.}
+#' In Artificial Neural Networks and Genetic Algorithms, pp. 245-249.
+#' Springer Verlag, Wien New York.
+#'
+#' Dorigo, M. and Gambardella, L. M. (1997)
+#' \emph{Ant Colony System: A Cooperative Learning Approach to the Traveling Salesman Problem.}
+#' In IEEE Transactions on Evolutionary Computation, pp. 53-66.
+#'
 #' @examples
 #'   library(netgen)
 #'   x = generateRandomNetwork(n.points = 6L)
@@ -25,6 +53,14 @@
 #'   x = makeNetwork(x, lower = 1, upper = 4)
 #'   ctrl = makeAntsControl(alpha = 1.2, beta = 1.8, n.ants = 20L, max.iter = 30L)
 #'   res = aco(x, ctrl, monitor = makeConsoleMonitor())
+#'
+#' @template arg_network
+#' @param control [\code{AntsControl}]\cr
+#'   Control object. See \code{\link{makeAntsControl}}.
+#' @template arg_monitor
+#' @return [\code{AntsResult}]
+#'   S3 result object.
+#'
 #' @export
 aco = function(x, control, monitor = makeNullMonitor()) {
   assertClass(x, "Network")
