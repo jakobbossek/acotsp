@@ -21,7 +21,6 @@
 #'   S3 result object.
 #'
 #' @export
-#FIXME: add @rdname or family or something like that for all these shortcut funs.
 #FIXME: max.pher.conc is updated to 1/(rho * C[best]) in MMAS each time a new best-so-far
 # tour is found, min.pher.conc is set to max.pher.conc / a with a being a parameter (
 # Stuetzle, 1999, Stuetzle & Hoos, 2000)

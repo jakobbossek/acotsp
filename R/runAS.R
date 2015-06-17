@@ -21,7 +21,6 @@
 #'   S3 result object.
 #'
 #' @export
-#FIXME: add @rdname or family or something like that for all these shortcut funs.
 runAS = function(
   x, n.ants = 10L, alpha = 1, beta = 2, rho = 0.1, att.factor = 1,
   monitor = makeNullMonitor(), ...) {
