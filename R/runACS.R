@@ -3,18 +3,15 @@
 #' @description
 #' Offers a more R-like interface to the Ant Colony System (ACS) for the TSP.
 #'
+#' @family ants_shortcuts
+#'
 #' @references
 #' Dorigo, M. and Gambardella, L. M. (1997)
 #' \emph{Ant Colony System: A Cooperative Learning Approach to the Traveling Salesman Problem.}
 #' In IEEE Transactions on Evolutionary Computation, pp. 53-66.
 #'
+#' @inheritParams makeAntsControl
 #' @template arg_network
-#' @template arg_nants
-#' @template arg_alpha
-#' @template arg_beta
-#' @template arg_rho
-#' @template arg_attfactor
-#' @template arg_localpherupdatefun
 #' @template arg_monitor
 #' @param ... [\code{any}]\cr
 #'   Further parameters passed to control object, e.g., \code{max.iter}. See

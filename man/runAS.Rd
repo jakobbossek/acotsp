@@ -53,4 +53,8 @@ Dorigo, M. and Maniezzo, V. and Colorni, A. (1996)
 In IEEE Transactions on Systems, Man, and Cybernetics - Part B.
 IEEE Press, Piscataway, NJ, USA.
 }
+\seealso{
+Other ants_shortcuts: \code{\link{runACS}};
+  \code{\link{runMMAS}}
+}
 

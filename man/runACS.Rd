@@ -58,4 +58,8 @@ Dorigo, M. and Gambardella, L. M. (1997)
 \emph{Ant Colony System: A Cooperative Learning Approach to the Traveling Salesman Problem.}
 In IEEE Transactions on Evolutionary Computation, pp. 53-66.
 }
+\seealso{
+Other ants_shortcuts: \code{\link{runAS}};
+  \code{\link{runMMAS}}
+}
 
