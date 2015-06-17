@@ -14,6 +14,7 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
     expect_equal(res$best.tour.length, opt.tour.length, info = err.msg)
     expect_equal(res$termination.code, 0, info = err.msg)
     expect_output(print(res), "Ants found solution")
+    expect_true(is.numeric(getTour(res)))
   }
 
   # setup(s) for the ant algorithm
@@ -29,6 +30,7 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
     for (alpha in alphas) {
       for (beta in betas) {
         ctrl = makeAntsControl(max.iter = max.iter, alpha = alpha, beta = beta, n.ants = n.ant)
+        expect_output(ctrl, "Ants Control Object")
         res = aco(instance, ctrl)
         err.msg = sprintf("Failed for alpha = %f, beta = %f, n.ants = %f", alpha, beta, n)
         expect_found_optimum(res, err.msg)
