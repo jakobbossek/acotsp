@@ -136,7 +136,7 @@ makeAntsControl = function(
 
 #' @export
 print.AntsControl = function(x, ...) {
-  catf("Ants Control object")
+  catf("Ants Control Object")
 
   catf("\nBASE PARAMETERS")
   if (x$n.elite > 0) {
