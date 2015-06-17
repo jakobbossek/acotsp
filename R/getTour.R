@@ -9,7 +9,7 @@
 #' @return [numeric]
 #'
 #' @export
-as.numeric.AntsResult = function(x, close = FALSE, ...) {
+getTour = function(x, close = FALSE, ...) {
   tour = x$best.tour
   if (close) {
     tour = c(tour, tour[1])
