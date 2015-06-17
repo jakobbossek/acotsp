@@ -1,6 +1,7 @@
-#' No monitoring at all.
+#' @title No monitoring at all.
 #'
-#' @return [\code{ecr_monitor}]
+#' @return [\code{AntsMonitor}]
+#'
 #' @export
 makeNullMonitor = function() {
   makeMonitor(

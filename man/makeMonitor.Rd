@@ -20,7 +20,7 @@ Function applied after the EA terminated.}
 Not used.}
 }
 \value{
-[\code{ecr_monitor}]
+[\code{AntsMonitor}]
   Monitor object.
 }
 \description{

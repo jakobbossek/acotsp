@@ -8,7 +8,7 @@ visualizePheromoneMatrix(pher.mat, ...)
 }
 \arguments{
 \item{pher.mat}{[\code{matrix}]\cr
-Square numeric matrix.}
+Square numeric (pheromone) matrix.}
 
 \item{...}{[any]\cr
 Currently not used.}

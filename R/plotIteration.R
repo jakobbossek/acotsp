@@ -1,4 +1,4 @@
-#' Generates a ggplot object of a single iteration.
+#' @title Generates a ggplot object of a single iteration.
 #'
 #' @param network [\code{Network}]\cr
 #'   Network.
@@ -6,6 +6,7 @@
 #'   List of internal iteration state containing pher.mat, best.tour and ants.tours
 #'   for a single iteration.
 #' @return [\code{ggplot}]
+#'
 #' @export
 plotIteration = function(network, storage) {
   assertClass(network, "Network")

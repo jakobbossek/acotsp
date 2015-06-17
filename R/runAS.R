@@ -1,6 +1,13 @@
-#' Wrapper function for the classical Ant System.
+#' @title Wrapper function for the classical Ant System.
 #'
+#' @description
 #' Offers a more R-like interface to the basic Ant System (AS) for the TSP.
+#'
+#' @references
+#' Dorigo, M. and Maniezzo, V. and Colorni, A. (1996)
+#' \emph{Ant System: Optimization by a Colony of Cooperating Agents.}
+#' In IEEE Transactions on Systems, Man, and Cybernetics - Part B.
+#' IEEE Press, Piscataway, NJ, USA.
 #'
 #' @template arg_network
 #' @template arg_nants
@@ -14,6 +21,7 @@
 #'   \code{makeAntsControl}.
 #' @return [\code{AntsResult}]
 #'   S3 result object.
+#'
 #' @export
 #FIXME: add @rdname or family or something like that for all these shortcut funs.
 runAS = function(

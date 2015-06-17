@@ -1,6 +1,12 @@
-#' Wrapper function for the the MAX-MIN Ant System.
+#' @title Wrapper function for the the MAX-MIN Ant System.
 #'
+#' @description
 #' Offers a more R-like interface to the MAX-MIN Ant System (MMAS) for the TSP.
+#'
+#' Stuetzle, T. and Hoos, H.H. (1998)
+#' \emph{Improvements on the Ant System: Introducing the MAX-MIN Ant System.}
+#' In Artificial Neural Networks and Genetic Algorithms, pp. 245-249.
+#' Springer Verlag, Wien New York.
 #'
 #' @template arg_network
 #' @template arg_nants
@@ -17,6 +23,7 @@
 #'   \code{makeAntsControl}.
 #' @return [\code{AntsResult}]
 #'   S3 result object.
+#'
 #' @export
 #FIXME: add @rdname or family or something like that for all these shortcut funs.
 #FIXME: max.pher.conc is updated to 1/(rho * C[best]) in MMAS each time a new best-so-far

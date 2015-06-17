@@ -1,4 +1,4 @@
-#' Plots optimization progress.
+#' @title Plots optimization progress.
 #'
 #' @param object [\code{AntsResult}]\cr
 #'   Return value of \code{\link{aco}}.

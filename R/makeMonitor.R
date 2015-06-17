@@ -1,4 +1,4 @@
-#' Factory method for monitor objects.
+#' @title Factory method for monitor objects.
 #'
 #' @param before [\code{function}]\cr
 #'   Function called one time after initialization of the EA.
@@ -8,8 +8,9 @@
 #'   Function applied after the EA terminated.
 #' @param ... [\code{any}]\cr
 #'   Not used.
-#' @return [\code{ecr_monitor}]
+#' @return [\code{AntsMonitor}]
 #'   Monitor object.
+#'
 #' @export
 makeMonitor = function(before = NULL, step = NULL, after = NULL, ...) {
   if (!is.null(before)) assertFunction(before)

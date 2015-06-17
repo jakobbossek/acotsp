@@ -2,7 +2,7 @@
 % Please edit documentation in R/asNumeric.R
 \name{as.numeric.AntsResult}
 \alias{as.numeric.AntsResult}
-\title{Extracts the best tour found from an AntResult object.}
+\title{Extracts the best tour found from an \code{AntResult} object.}
 \usage{
 \method{as.numeric}{AntsResult}(x, close = FALSE, ...)
 }
@@ -16,7 +16,10 @@ Close the tour, i. e., append the last city to the end? Default is \code{FALSE}.
 \item{...}{[any]\cr
 Currenly not used.}
 }
+\value{
+[numeric]
+}
 \description{
-Extracts the best tour found from an AntResult object.
+Extracts the best tour found from an \code{AntResult} object.
 }
 

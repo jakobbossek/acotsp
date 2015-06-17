@@ -7,7 +7,7 @@
 makeNullMonitor()
 }
 \value{
-[\code{ecr_monitor}]
+[\code{AntsMonitor}]
 }
 \description{
 No monitoring at all.

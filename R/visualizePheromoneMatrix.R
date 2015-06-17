@@ -1,13 +1,15 @@
-#' Helper function to visualize a pheromone matrix.
+#' @title Helper function to visualize a pheromone matrix.
 #'
+#' @description
 #' This function draws a heatmap with darker color indicating higher pheromone
 #' concentration on the corresponding arc.
 #'
 #' @param pher.mat [\code{matrix}]\cr
-#'   Square numeric matrix.
+#'   Square numeric (pheromone) matrix.
 #' @param ... [any]\cr
 #'   Currently not used.
 #' @return \code{\link[ggplot2]{ggplot}} object.
+#'
 #' @export
 visualizePheromoneMatrix = function(pher.mat, ...) {
   assertMatrix(pher.mat)

@@ -1,6 +1,12 @@
-#' Wrapper function for the Ant Colony System.
+#' @title Wrapper function for the Ant Colony System.
 #'
+#' @description
 #' Offers a more R-like interface to the Ant Colony System (ACS) for the TSP.
+#'
+#' @references
+#' Dorigo, M. and Gambardella, L. M. (1997)
+#' \emph{Ant Colony System: A Cooperative Learning Approach to the Traveling Salesman Problem.}
+#' In IEEE Transactions on Evolutionary Computation, pp. 53-66.
 #'
 #' @template arg_network
 #' @template arg_nants
@@ -15,6 +21,7 @@
 #'   \code{makeAntsControl}.
 #' @return [\code{AntsResult}]
 #'   S3 result object.
+#'
 #' @export
 #FIXME: add @rdname or family or something like that for all these shortcut funs.
 runACS = function(

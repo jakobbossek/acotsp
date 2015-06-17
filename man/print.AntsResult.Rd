@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.AntsResult}
 \alias{print.AntsResult}
-\title{Prints AntsResult object to standard output.}
+\title{Prints \code{AntsResult} object to standard output.}
 \usage{
 \method{print}{AntsResult}(x, ...)
 }
@@ -17,6 +17,6 @@ Currently not used.}
 Nothing
 }
 \description{
-Prints AntsResult object to standard output.
+Prints \code{AntsResult} object to standard output.
 }
 

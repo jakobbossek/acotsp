@@ -1,10 +1,11 @@
-#' Prints AntsResult object to standard output.
+#' @title Prints \code{AntsResult} object to standard output.
 #'
 #' @param x [\code{AntsResult}]\cr
 #'   Result object.
 #' @param ... [any]\cr
 #'   Currently not used.
 #' @return Nothing
+#'
 #' @export
 print.AntsResult = function(x, ...) {
   n = getNumberOfNodes(x$network)

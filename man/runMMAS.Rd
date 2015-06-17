@@ -56,5 +56,10 @@ Further parameters passed to control object, e.g., \code{max.iter}. See
 }
 \description{
 Offers a more R-like interface to the MAX-MIN Ant System (MMAS) for the TSP.
+
+Stuetzle, T. and Hoos, H.H. (1998)
+\emph{Improvements on the Ant System: Introducing the MAX-MIN Ant System.}
+In Artificial Neural Networks and Genetic Algorithms, pp. 245-249.
+Springer Verlag, Wien New York.
 }
 

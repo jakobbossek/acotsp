@@ -53,4 +53,9 @@ Further parameters passed to control object, e.g., \code{max.iter}. See
 \description{
 Offers a more R-like interface to the Ant Colony System (ACS) for the TSP.
 }
+\references{
+Dorigo, M. and Gambardella, L. M. (1997)
+\emph{Ant Colony System: A Cooperative Learning Approach to the Traveling Salesman Problem.}
+In IEEE Transactions on Evolutionary Computation, pp. 53-66.
+}
 

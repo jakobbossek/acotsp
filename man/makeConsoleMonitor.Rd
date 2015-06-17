@@ -11,7 +11,7 @@ makeConsoleMonitor(show.info.stepsize = 5L)
 Adjust the stepsize of iterations with informative messages.}
 }
 \value{
-[\code{ecr_monitor}]
+[\code{AntsMonitor}]
 }
 \description{
 This is the default monitoring function used by \pkg{ants}. It simply outputs

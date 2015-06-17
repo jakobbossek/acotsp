@@ -1,5 +1,6 @@
-#' Generates a control object for the \code{\link{aco}} function.
+#' @title Generates a control object for the \code{\link{aco}} function.
 #'
+#' @description
 #' This function generates a control object, i.e., internally a simple list, of
 #' parameters and does sanity checks.
 #'
@@ -41,6 +42,7 @@
 #'   to plot the optimization progress via \code{autoplot.AntsResult}.
 #' @return [\code{AntsControl}]
 #'   S3 control object containing all the checked parameters and reasonable defaults.
+#'
 #' @export
 makeAntsControl = function(
   n.ants = 2L,
