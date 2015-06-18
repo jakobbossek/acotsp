@@ -1,4 +1,4 @@
-# ants: Ant Colony Optimiation (ACO) for the TSP
+# ants: Ant Colony Optimization for the Travelling Salesperson Problem
 
 [![Build Status](https://travis-ci.org/jakobbossek/ants.svg?branch=master)](https://travis-ci.org/jakobbossek/ants)
 [![Build status](https://ci.appveyor.com/api/projects/status/ub5xs7w5fudee7g7/branch/master?svg=true)](https://ci.appveyor.com/project/jakobbossek/ants/branch/master)
