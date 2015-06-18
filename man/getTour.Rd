@@ -8,7 +8,7 @@ getTour(x, close = FALSE, ...)
 }
 \arguments{
 \item{x}{[\code{AntResult}]\cr
-Result object of a run of the \code{\link{aco}} function.}
+Result object of a run of the \code{\link{runACOTSP}} function.}
 
 \item{close}{[\code{logical(1)}]\cr
 Close the tour, i. e., append the last city to the end? Default is \code{FALSE}.}

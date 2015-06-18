@@ -38,7 +38,7 @@ for basic console output.}
 
 \item{...}{[\code{any}]\cr
 Further parameters passed to control object, e.g., \code{max.iter}. See
-\code{makeAntsControl}.}
+\code{makeACOTSPControl}.}
 }
 \value{
 [\code{AntsResult}]

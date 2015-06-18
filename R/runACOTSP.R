@@ -1,12 +1,12 @@
-#' @title Ant System Optimization (ACO) algorithm for the symmetric
+#' @title Ant System Optimization Algorithm for the
 #' \href{http://en.wikipedia.org/wiki/Travelling_salesman_problem}{Travelling
-#' Salesperson Problem} (TSP).
+#' Salesperson Problem}.
 #'
 #' @description
 #' This is the main function of the package and the entry point for Ant Colony
 #' based optiomization of the TSP. The function expects a graph, an optional
 #' monitoring function (see e.g. \code{\link{makeMonitor}}) and a control object
-#' (see \code{\link{makeAntsControl}}). The latter contains all the settings
+#' (see \code{\link{makeACOTSPControl}}). The latter contains all the settings
 #' of the different parameters. The vast number of parameter combinations allows
 #' for many different ant strategies.
 #'
@@ -42,29 +42,29 @@
 #' @examples
 #'   library(netgen)
 #'   x = generateRandomNetwork(n.points = 6L)
-#'   ctrl = makeAntsControl(
+#'   ctrl = makeACOTSPControl(
 #'     alpha = 1.2, beta = 1.8, n.ants = 15L,
 #'     init.pher.conc = 0.01, max.iter = 10L
 #'   )
-#'   res = aco(x, ctrl)
+#'   res = runACOTSP(x, ctrl)
 #'   print(res)
 #'
 #'   x = matrix(c(1, 2, 1, 3, 1, 4, 3, 1, 3, 2, 3, 4), ncol = 2, byrow = TRUE)
 #'   x = makeNetwork(x, lower = 1, upper = 4)
-#'   ctrl = makeAntsControl(alpha = 1.2, beta = 1.8, n.ants = 20L, max.iter = 30L)
-#'   res = aco(x, ctrl, monitor = makeConsoleMonitor())
+#'   ctrl = makeACOTSPControl(alpha = 1.2, beta = 1.8, n.ants = 20L, max.iter = 30L)
+#'   res = runACOTSP(x, ctrl, monitor = makeConsoleMonitor())
 #'
 #' @template arg_network
-#' @param control [\code{AntsControl}]\cr
-#'   Control object. See \code{\link{makeAntsControl}}.
+#' @param control [\code{ACOTSPControl}]\cr
+#'   Control object. See \code{\link{makeACOTSPControl}}.
 #' @template arg_monitor
 #' @return [\code{AntsResult}]
 #'   S3 result object.
 #'
 #' @export
-aco = function(x, control, monitor = makeNullMonitor()) {
+runACOTSP = function(x, control, monitor = makeNullMonitor()) {
   assertClass(x, "Network")
-  assertClass(control, "AntsControl")
+  assertClass(control, "ACOTSPControl")
   assertClass(monitor, "AntsMonitor")
 
   # extract some instance information
@@ -213,7 +213,7 @@ aco = function(x, control, monitor = makeNullMonitor()) {
 #   Matrix containing the trails/tours of each ant row-wise.
 # @param iter [integer(1)]
 #   Current iteration.
-# @param control [AntsControl]
+# @param control [ACOTSPControl]
 #   Control object.
 # @return [matrix] Modified ants.tours matrix.
 applyLocalSearch = function(x, ants.tours, iter, control) {
@@ -345,7 +345,7 @@ getEliteAnts = function(tour.length, n.elite) {
 #   Global best tour, i.e., best tour so far.
 # @param global.best.tour.length [numeric(1)]
 #   Length of the global best tour.
-# @param control [AntsControl]
+# @param control [ACOTSPControl]
 #   Control object.
 # @return [matrix]
 #   Updated pheromone matrix.

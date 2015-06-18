@@ -12,10 +12,10 @@ test_that("Local Search is applied.", {
     return(seq(n))
   }
   max.iter = 2L
-  ctrl = makeAntsControl(
+  ctrl = makeACOTSPControl(
     max.iter = max.iter, n.ants = 2L,
     local.search.fun = myLocalSearchFun, local.search.step = seq(max.iter)
   )
-  res = aco(instance, ctrl)
+  res = runACOTSP(instance, ctrl)
   expect_true(all.equal(res$best.tour, seq(getNumberOfNodes(instance))))
 })

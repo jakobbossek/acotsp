@@ -10,12 +10,12 @@
 #' \emph{Ant Colony System: A Cooperative Learning Approach to the Traveling Salesman Problem.}
 #' In IEEE Transactions on Evolutionary Computation, pp. 53-66.
 #'
-#' @inheritParams makeAntsControl
+#' @inheritParams makeACOTSPControl
 #' @template arg_network
 #' @template arg_monitor
 #' @param ... [\code{any}]\cr
 #'   Further parameters passed to control object, e.g., \code{max.iter}. See
-#'   \code{makeAntsControl}.
+#'   \code{makeACOTSPControl}.
 #' @return [\code{AntsResult}]
 #'   S3 result object.
 #'
@@ -35,7 +35,7 @@ runACS = function(
     }
   }
   assertFunction(local.pher.update.fun, args = "pher")
-  control = makeAntsControl(
+  control = makeACOTSPControl(
     n.ants = n.ants,
     n.elite = 0L, # only the global best tour/ant is allowed to place pheromones
     use.global.best = TRUE,
@@ -43,5 +43,5 @@ runACS = function(
     local.pher.update.fun = local.pher.update.fun,
     alpha = alpha, beta = beta,
     rho = rho, att.factor = att.factor, ...)
-  aco(x, control, monitor)
+  runACOTSP(x, control, monitor)
 }

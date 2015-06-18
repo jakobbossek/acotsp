@@ -29,9 +29,9 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
   for (n.ant in n.ants) {
     for (alpha in alphas) {
       for (beta in betas) {
-        ctrl = makeAntsControl(max.iter = max.iter, alpha = alpha, beta = beta, n.ants = n.ant)
+        ctrl = makeACOTSPControl(max.iter = max.iter, alpha = alpha, beta = beta, n.ants = n.ant)
         expect_output(ctrl, "Ants Control Object")
-        res = aco(instance, ctrl)
+        res = runACOTSP(instance, ctrl)
         err.msg = sprintf("Failed for alpha = %f, beta = %f, n.ants = %f", alpha, beta, n)
         expect_found_optimum(res, err.msg)
       }
@@ -41,25 +41,25 @@ test_that("Ant System finds optimum of simple rectangluar instance", {
   # test different n.elite values
   ns.elite = c(3L, 7L)
   for (n.elite in ns.elite) {
-    ctrl = makeAntsControl(max.iter = 10L, n.ants = 10L, n.elite = n.elite)
-    res = aco(instance, ctrl)
+    ctrl = makeACOTSPControl(max.iter = 10L, n.ants = 10L, n.elite = n.elite)
+    res = runACOTSP(instance, ctrl)
     err.msg = sprintf("Failed to find optimum for n.elite = %i.", n.elite)
     expect_found_optimum(res, err.msg)
   }
 
   # test that using only the global best tour works
-  ctrl = makeAntsControl(max.iter = 10L, n.ants = 10L, use.global.best = TRUE, best.deposit.only = TRUE)
-  res = aco(instance, ctrl)
+  ctrl = makeACOTSPControl(max.iter = 10L, n.ants = 10L, use.global.best = TRUE, best.deposit.only = TRUE)
+  res = runACOTSP(instance, ctrl)
   expect_found_optimum(res, err.msg = sprintf("Failed to find optimum with only global best deposit (ACS)."))
 
   # CHECK IF CONTROL OBJECT COMPUTATION FAILS
 
   # at least one ant must participate in pheromone update
-  expect_error(makeAntsControl(n.elite = 0L, use.global.best = FALSE))
+  expect_error(makeACOTSPControl(n.elite = 0L, use.global.best = FALSE))
 
   # n.elite needs to be at most n.ants
-  expect_error(makeAntsControl(n.ants = 10L, n.elite = 11L))
+  expect_error(makeACOTSPControl(n.ants = 10L, n.elite = 11L))
 
   # local search function given, but not called anytime
-  expect_warning(makeAntsControl(local.search.fun = function(x, initial.tour) initial.tour))
+  expect_warning(makeACOTSPControl(local.search.fun = function(x, initial.tour) initial.tour))
 })

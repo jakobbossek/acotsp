@@ -1,4 +1,4 @@
-#' @title ants: Ant Colony Optimization for the Travelling Salesperson Problem
+#' @title acotsp: Ant Colony Optimization for the Travelling Salesperson Problem
 #'
 #' @description
 #' The ants package makes it possible to tackle problem instances for the
@@ -10,9 +10,9 @@
 #' i.e., short trials which are frequently used by the ants and more and more ants
 #' start to follow this \emph{ant trial}.
 #'
-#' To solve a given problem instance with the \pkg{ants} package, one has to
+#' To solve a given problem instance with the \pkg{acotsp} package, one has to
 #' wrap it in a \code{Network} (see package \pkg{netgen}). The next step is
-#' setting up an \code{AntsControl} control object via \code{\link{makeAntsControl}}.
+#' setting up an \code{ACOTSPControl} control object via \code{\link{makeACOTSPControl}}.
 #' Here we specify all the parameters, e.g. the evaporation rate, the minimal
 #' pheromone concentration or an additional local search procedure. There is a
 #' vast number of parameters available with reasonable defaults which makes
@@ -40,7 +40,7 @@
 #' }
 #'
 #' @docType package
-#' @name ants
+#' @name acotsp
 # EXCLUDE COVERAGE START
 NULL
 # EXCLUDE COVERAGE END

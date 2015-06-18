@@ -1,8 +1,8 @@
-# ants: Ant Colony Optimization for the Travelling Salesperson Problem
+# acotsp: Ant Colony Optimization for the Travelling Salesperson Problem
 
-[![Build Status](https://travis-ci.org/jakobbossek/ants.svg?branch=master)](https://travis-ci.org/jakobbossek/ants)
-[![Build status](https://ci.appveyor.com/api/projects/status/ub5xs7w5fudee7g7/branch/master?svg=true)](https://ci.appveyor.com/project/jakobbossek/ants/branch/master)
-[![Coverage Status](https://coveralls.io/repos/jakobbossek/ants/badge.svg)](https://coveralls.io/r/jakobbossek/ants)
+[![Build Status](https://travis-ci.org/jakobbossek/acotsp.svg?branch=master)](https://travis-ci.org/jakobbossek/acotsp)
+[![Build status](https://ci.appveyor.com/api/projects/status/ub5xs7w5fudee7g7/branch/master?svg=true)](https://ci.appveyor.com/project/jakobbossek/acotsp/branch/master)
+[![Coverage Status](https://coveralls.io/repos/jakobbossek/acotsp/badge.svg)](https://coveralls.io/r/jakobbossek/acotsp)
 
 **Note:** this package is under heavy developement in the moment.
 
@@ -24,7 +24,7 @@ solving hard computational problems. This package impelements the Ant Colony Opt
 Currently there is only this developement version of netgen. The package will be available on CRAN soon. To install the current developement version of the package, install the devtools package by Hadley Wickham, load it and type the following line to a R session:
 
 ```splus
-install_github("jakobbossek/ants")
+install_github("jakobbossek/acotsp")
 ```
 
 ## Quickstart
@@ -33,7 +33,7 @@ Coming soon ...
 
 ## Contact
 
-Please address questions and missing features about the **ants package** to the author Jakob Bossek <j.bossek@gmail.com>. Found some nasty bugs? Please use the [issue tracker](https://github.com/jbossek/ants/issues) for this. Pay attention to explain the problem as good as possible. At its best you provide an example, so I can reproduce your problem.
+Please address questions and missing features about the **acotsp package** to the author Jakob Bossek <j.bossek@gmail.com>. Found some nasty bugs? Please use the [issue tracker](https://github.com/jbossek/acotsp/issues) for this. Pay attention to explain the problem as good as possible. At its best you provide an example, so I can reproduce your problem.
 
 
 

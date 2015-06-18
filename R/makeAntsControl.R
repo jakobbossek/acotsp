@@ -1,4 +1,4 @@
-#' @title Generates a control object for the \code{\link{aco}} function.
+#' @title Generates a control object for the \code{\link{runACOTSP}} function.
 #'
 #' @description
 #' This function generates a control object, i.e., internally a simple list, of
@@ -40,11 +40,11 @@
 #'   matrix, all ant trails, best ant trail of the current iteration and so on?
 #'   Default is \code{FALSE}. You need to set this to \code{TRUE} if you want
 #'   to plot the optimization progress via \code{autoplot.AntsResult}.
-#' @return [\code{AntsControl}]
+#' @return [\code{ACOTSPControl}]
 #'   S3 control object containing all the checked parameters and reasonable defaults.
 #'
 #' @export
-makeAntsControl = function(
+makeACOTSPControl = function(
   n.ants = 2L,
   n.elite = n.ants,
   use.global.best = FALSE,
@@ -130,12 +130,12 @@ makeAntsControl = function(
     global.opt.value = global.opt.value,
     termination.eps = termination.eps,
     trace.all = trace.all,
-    classes = "AntsControl"
+    classes = "ACOTSPControl"
   )
 }
 
 #' @export
-print.AntsControl = function(x, ...) {
+print.ACOTSPControl = function(x, ...) {
   catf("Ants Control Object")
 
   catf("\nBASE PARAMETERS")

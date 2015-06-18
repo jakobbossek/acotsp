@@ -8,7 +8,7 @@ plotResult(object, step.size = 1L, pause = FALSE, ...)
 }
 \arguments{
 \item{object}{[\code{AntsResult}]\cr
-Return value of \code{\link{aco}} or one of the shortcut functions, e.g.,
+Return value of \code{\link{runACOTSP}} or one of the shortcut functions, e.g.,
 \code{\link{runAS}}.}
 
 \item{step.size}{[\code{integer(1)}]\cr
@@ -30,7 +30,7 @@ plots can be rendered directly via the option \code{pause}.
 }
 \note{
 This function requires the storage of the entire optimization trace,
-  i. e., set the parameter \code{trace.all} of \code{makeAntsControl} to
+  i. e., set the parameter \code{trace.all} of \code{makeACOTSPControl} to
   \code{TRUE}.
 }
 

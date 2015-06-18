@@ -6,7 +6,7 @@
 #' plots can be rendered directly via the option \code{pause}.
 #'
 #' @param object [\code{AntsResult}]\cr
-#'   Return value of \code{\link{aco}} or one of the shortcut functions, e.g.,
+#'   Return value of \code{\link{runACOTSP}} or one of the shortcut functions, e.g.,
 #'   \code{\link{runAS}}.
 #' @param step.size [\code{integer(1)}]\cr
 #'   Which iterations shall be plotted? Default is \code{1L}.
@@ -15,7 +15,7 @@
 #' @param ... [any]\cr
 #'   Currently not used.
 #' @note This function requires the storage of the entire optimization trace,
-#'   i. e., set the parameter \code{trace.all} of \code{makeAntsControl} to
+#'   i. e., set the parameter \code{trace.all} of \code{makeACOTSPControl} to
 #'   \code{TRUE}.
 #'
 #' @return [\code{list}] A named list of \code{\link[ggplot2]{ggplot}} objects.
@@ -25,7 +25,7 @@ plotResult = function(object, step.size = 1L, pause = FALSE, ...) {
   storage = object$storage
   if (is.null(storage)) {
     stopf("Result can not be plotted! Storage is empty. You need to set the trace.all
-      parameter in the AntsControl object.")
+      parameter in the ACOTSPControl object.")
   }
   network = object$network
   reached.iter = object$iters.done

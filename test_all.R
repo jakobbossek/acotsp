@@ -5,7 +5,7 @@ library(testthat)
 if (interactive()) {
   load_all(".")
 } else {
-  library(ants)
+  library(acotsp)
 }
 
 test_dir("tests/testthat")

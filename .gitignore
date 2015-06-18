@@ -1,8 +1,8 @@
 .Rproj.user
 .Rhistory
 .RData
-ants.Rcheck
-ants.Rproj
+*.Rcheck
+*.Rproj
 playground.R
 todo.md
 test_specific.R
