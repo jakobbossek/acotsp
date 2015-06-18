@@ -3,6 +3,7 @@
 #' @return [\code{AntsMonitor}]
 #'
 #' @export
+# nocov start
 makeNullMonitor = function() {
   makeMonitor(
     before = function(envir = parent.frame()) {},
@@ -10,3 +11,4 @@ makeNullMonitor = function() {
     after = function(envir = parent.frame()) {}
   )
 }
+# nocov end

@@ -10,7 +10,7 @@
 #' @return [\code{AntsMonitor}]
 #'
 #' @export
-# EXCLUDE COVERAGE START
+# nocov start
 makeConsoleMonitor = function(show.info.stepsize = 5L) {
   force(show.info.stepsize)
   assertInteger(show.info.stepsize, len = 1L, lower = 1L, upper = 100L, any.missing = FALSE)
@@ -36,4 +36,4 @@ makeConsoleMonitor = function(show.info.stepsize = 5L) {
     }
   )
 }
-# EXCLUDE COVERAGE END
+# nocov end

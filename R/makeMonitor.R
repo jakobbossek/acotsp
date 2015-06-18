@@ -12,7 +12,7 @@
 #'   Monitor object.
 #'
 #' @export
-# EXCLUDE COVERAGE START
+# nocov start
 makeMonitor = function(before = NULL, step = NULL, after = NULL, ...) {
   if (!is.null(before)) assertFunction(before)
   if (!is.null(step)) assertFunction(step)
@@ -26,4 +26,4 @@ makeMonitor = function(before = NULL, step = NULL, after = NULL, ...) {
     ),
     class = "AntsMonitor")
 }
-# EXCLUDE COVERAGE END
+# nocov end
